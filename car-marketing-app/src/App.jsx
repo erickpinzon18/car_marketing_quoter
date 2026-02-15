@@ -13,6 +13,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <div className="fixed inset-0 pointer-events-none z-[9999] flex items-center justify-center overflow-hidden">
+          <div className="text-[15vw] font-black text-slate-900/5 -rotate-45 select-none whitespace-nowrap">
+            DEMO VERSION
+          </div>
+        </div>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route

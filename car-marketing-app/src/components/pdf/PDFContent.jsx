@@ -82,7 +82,22 @@ const PDFContent = forwardRef(function PDFContent(
   );
 
   return (
-    <div ref={ref}>
+    <div ref={ref} style={{ position: 'relative' }}>
+      {/* Watermark */}
+      <div style={{
+        position: 'absolute',
+        top: '400px', // Approximate center of A4
+        left: '50%',
+        transform: 'translate(-50%, -50%) rotate(-45deg)',
+        fontSize: '120px',
+        fontWeight: '900',
+        color: 'rgba(0,0,0,0.04)',
+        zIndex: 0,
+        whiteSpace: 'nowrap',
+        pointerEvents: 'none'
+      }}>
+        DEMO VERSION
+      </div>
       {/* PAGE 1: Quote Summary */}
       <div style={pageStyle}>
         
@@ -286,7 +301,22 @@ const PDFContent = forwardRef(function PDFContent(
       <div className="html2pdf__page-break"></div>
 
       {/* PAGE 2: Amortization Table */}
-      <div style={pageStyle}>
+      <div style={{ ...pageStyle, position: 'relative' }}>
+        {/* Watermark */}
+        <div style={{
+          position: 'absolute',
+          top: '400px',
+          left: '50%',
+          transform: 'translate(-50%, -50%) rotate(-45deg)',
+          fontSize: '120px',
+          fontWeight: '900',
+          color: 'rgba(0,0,0,0.04)',
+          zIndex: 0,
+          whiteSpace: 'nowrap',
+          pointerEvents: 'none'
+        }}>
+          DEMO VERSION
+        </div>
         
         {/* Header Page 2 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
