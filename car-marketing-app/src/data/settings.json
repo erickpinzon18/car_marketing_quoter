@@ -1,0 +1,42 @@
+{
+  "rates": {
+    "credito_normal": 12.9,
+    "pagos_programados": 18.49,
+    "smart_credit": 14.9,
+    "pink_credit": 15.9,
+    "green_credit": 12.9,
+    "moto_credit": 16.9,
+    "arrendamiento": 0,
+    "green_leasing": 0,
+    "leasing_moto": 0
+  },
+  "exchangeRates": {
+    "USD": 19.50,
+    "COP": 0.0045,
+    "CLP": 0.021,
+    "PEN": 5.20,
+    "ARS": 0.016,
+    "BRL": 3.40,
+    "UYU": 0.47,
+    "BOB": 2.82,
+    "GTQ": 2.52,
+    "DOP": 0.33,
+    "CRC": 0.037,
+    "PAB": 19.50
+  },
+  "currencies": [
+    { "code": "MXN", "flag": "🇲🇽", "name": "Peso Mexicano" },
+    { "code": "USD", "flag": "🇺🇸", "name": "Dólar USA" },
+    { "code": "COP", "flag": "🇨🇴", "name": "Peso Colombiano" },
+    { "code": "CLP", "flag": "🇨🇱", "name": "Peso Chileno" },
+    { "code": "PEN", "flag": "🇵🇪", "name": "Sol Peruano" },
+    { "code": "ARS", "flag": "🇦🇷", "name": "Peso Argentino" },
+    { "code": "BRL", "flag": "🇧🇷", "name": "Real Brasileño" },
+    { "code": "UYU", "flag": "🇺🇾", "name": "Peso Uruguayo" },
+    { "code": "BOB", "flag": "🇧🇴", "name": "Boliviano" },
+    { "code": "GTQ", "flag": "🇬🇹", "name": "Quetzal" },
+    { "code": "DOP", "flag": "🇩🇴", "name": "Peso Dominicano" },
+    { "code": "CRC", "flag": "🇨🇷", "name": "Colón" },
+    { "code": "PAB", "flag": "🇵🇦", "name": "Balboa" }
+  ]
+}

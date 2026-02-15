@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Car Marketing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "brand-blue": "#0052CC",
+              "brand-dark": "#091E42",
+              "brand-light": "#DEEBFF",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+      * {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 82, 204, 0.08),
+          0 2px 8px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+        opacity: 0;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .bg-pattern {
+        background-image: radial-gradient(
+            circle at 20% 50%,
+            rgba(0, 82, 204, 0.04) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(0, 82, 204, 0.02) 0%,
+            transparent 40%
+          );
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 bg-pattern min-h-screen flex flex-col">
+    <!-- Header -->
+    <header
+      class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <img
+            src="https://carmarketing.mx/wp-content/uploads/2023/10/carmarketing-blanco.jpeg"
+            alt="Car Marketing Logo"
+            class="h-8 md:h-10 w-auto object-contain"
+          />
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="hidden md:flex flex-col items-end">
+            <span
+              id="user-name-display"
+              class="text-sm font-bold text-brand-dark"
+              >Usuario</span
+            >
+            <span
+              id="user-role-display"
+              class="text-xs font-medium text-slate-500 uppercase"
+              >Rol</span
+            >
+          </div>
+          <button
+            onclick="logout()"
+            class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition-colors"
+            title="Cerrar Sesión"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
+      <div class="flex justify-between items-center mb-8 fade-in">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-brand-dark mb-1">
+            Dashboard
+          </h1>
+          <p class="text-slate-500">Bienvenido a tu panel de control</p>
+        </div>
+        <button
+          onclick="window.location.href='cotizador.html'"
+          class="bg-brand-blue text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-500/30 hover:bg-blue-600 transition-all flex items-center gap-2"
+        >
+          <i class="fas fa-plus"></i>
+          <span class="hidden md:inline">Nueva Cotización</span>
+        </button>
+      </div>
+
+      <!-- Admin Section: Exchange Rates -->
+      <div id="admin-section" class="hidden mb-8 fade-in">
+        <div class="glass-panel rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-6">
+            <div
+              class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"
+            >
+              <i class="fas fa-coins"></i>
+            </div>
+            <h2 class="text-lg font-bold text-brand-dark">Tipos de Cambio</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label
+                class="block text-xs font-bold text-slate-500 uppercase mb-2"
+                >Dólar (USD)</label
+              >
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                <input
+                  type="number"
+                  id="usd-rate"
+                  value="19.50"
+                  step="0.01"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-7 pr-3 font-semibold text-brand-dark focus:border-brand-blue focus:outline-none"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                class="block text-xs font-bold text-slate-500 uppercase mb-2"
+                >Euro (EUR)</label
+              >
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                <input
+                  type="number"
+                  id="eur-rate"
+                  value="21.20"
+                  step="0.01"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-7 pr-3 font-semibold text-brand-dark focus:border-brand-blue focus:outline-none"
+                />
+              </div>
+            </div>
+            <div class="flex items-end">
+              <button
+                onclick="saveRates()"
+                class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl hover:bg-slate-700 transition-colors"
+              >
+                Actualizar Tasas
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in"
+        style="animation-delay: 0.1s"
+      >
+        <!-- Stat 1 -->
+        <div class="glass-panel rounded-2xl p-5 border-l-4 border-brand-blue">
+          <p
+            class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1"
+          >
+            Cotizaciones Mes
+          </p>
+          <div class="flex items-center justify-between">
+            <h3 class="text-3xl font-bold text-brand-dark">24</h3>
+            <span
+              class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full"
+            >
+              <i class="fas fa-arrow-up mr-1"></i>12%
+            </span>
+          </div>
+        </div>
+        <!-- Stat 2 -->
+        <div class="glass-panel rounded-2xl p-5 border-l-4 border-purple-500">
+          <p
+            class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1"
+          >
+            Clientes Activos
+          </p>
+          <div class="flex items-center justify-between">
+            <h3 class="text-3xl font-bold text-brand-dark">156</h3>
+            <span
+              class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full"
+            >
+              <i class="fas fa-arrow-up mr-1"></i>5%
+            </span>
+          </div>
+        </div>
+        <!-- Stat 3 -->
+        <div class="glass-panel rounded-2xl p-5 border-l-4 border-green-500">
+          <p
+            class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1"
+          >
+            Ventas Cerradas
+          </p>
+          <div class="flex items-center justify-between">
+            <h3 class="text-3xl font-bold text-brand-dark">8</h3>
+            <span
+              class="text-slate-400 text-xs font-bold bg-slate-50 px-2 py-1 rounded-full"
+            >
+              0%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRM Table -->
+      <div
+        class="glass-panel rounded-3xl overflow-hidden fade-in"
+        style="animation-delay: 0.2s"
+      >
+        <div
+          class="p-6 border-b border-slate-100 flex justify-between items-center"
+        >
+          <h2 class="text-lg font-bold text-brand-dark flex items-center gap-2">
+            <i class="fas fa-users text-brand-blue"></i>
+            <span id="crm-table-title">Mis Clientes</span>
+          </h2>
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Buscar cliente..."
+              class="pl-9 pr-4 py-2 rounded-lg bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-brand-blue w-64"
+            />
+            <i
+              class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs"
+            ></i>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm" id="crm-table">
+            <thead
+              class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold text-xs"
+            >
+              <tr>
+                <th class="px-6 py-4">Cliente</th>
+                <th class="px-6 py-4">Vehículo</th>
+                <th class="px-6 py-4">Fecha Cotización</th>
+                <th class="px-6 py-4 text-center">Plan</th>
+                <th class="px-6 py-4 text-center">Total</th>
+                <th class="px-6 py-4 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody
+              class="divide-y divide-slate-100 bg-white"
+              id="crm-table-body"
+            >
+              <!-- Mock Data Row 1 -->
+              <tr class="hover:bg-slate-50 transition-colors group">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-8 h-8 rounded-full bg-blue-100 text-brand-blue flex items-center justify-center font-bold text-xs"
+                    >
+                      JP
+                    </div>
+                    <div>
+                      <div class="font-bold text-brand-dark">Juan Pérez</div>
+                      <div class="text-xs text-slate-400">
+                        juan.perez@gmail.com
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="font-medium text-slate-700">Mazda 3</div>
+                  <div class="text-xs text-slate-400">Sedan Grand Touring</div>
+                </td>
+                <td class="px-6 py-4 text-slate-500">10 Feb 2026</td>
+                <td class="px-6 py-4 text-center">
+                  <span
+                    class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-brand-blue border border-blue-100"
+                  >
+                    Crédito
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center font-bold text-slate-700">
+                  $485,000
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button
+                    class="text-slate-400 hover:text-brand-blue transition-colors px-2"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button
+                    class="text-slate-400 hover:text-green-500 transition-colors px-2"
+                  >
+                    <i class="fab fa-whatsapp"></i>
+                  </button>
+                  <button
+                    class="text-slate-400 hover:text-indigo-500 transition-colors px-2"
+                  >
+                    <i class="fas fa-file-pdf"></i>
+                  </button>
+                </td>
+              </tr>
+              <!-- Mock Data Row 2 -->
+              <tr class="hover:bg-slate-50 transition-colors group">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xs"
+                    >
+                      MG
+                    </div>
+                    <div>
+                      <div class="font-bold text-brand-dark">
+                        María González
+                      </div>
+                      <div class="text-xs text-slate-400">
+                        maria.g@outlook.com
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="font-medium text-slate-700">Kia Sportage</div>
+                  <div class="text-xs text-slate-400">SXL 2025</div>
+                </td>
+                <td class="px-6 py-4 text-slate-500">08 Feb 2026</td>
+                <td class="px-6 py-4 text-center">
+                  <span
+                    class="px-3 py-1 rounded-full text-xs font-bold bg-pink-50 text-pink-600 border border-pink-100"
+                  >
+                    Pink
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center font-bold text-slate-700">
+                  $620,900
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button
+                    class="text-slate-400 hover:text-brand-blue transition-colors px-2"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button
+                    class="text-slate-400 hover:text-green-500 transition-colors px-2"
+                  >
+                    <i class="fab fa-whatsapp"></i>
+                  </button>
+                  <button
+                    class="text-slate-400 hover:text-indigo-500 transition-colors px-2"
+                  >
+                    <i class="fas fa-file-pdf"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="p-4 border-t border-slate-100 flex justify-center">
+          <button class="text-sm font-bold text-brand-blue hover:underline">
+            Ver todos los clientes
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Check Auth
+      const userSession = sessionStorage.getItem("currentUser");
+      if (!userSession) {
+        window.location.href = "login.html";
+      }
+
+      const user = JSON.parse(userSession);
+
+      // Update Header
+      document.getElementById("user-name-display").textContent = user.name;
+      document.getElementById("user-role-display").textContent = getRoleName(
+        user.role
+      );
+
+      // Role Logic
+      if (user.role === "admin") {
+        document.getElementById("admin-section").classList.remove("hidden");
+        document.getElementById("crm-table-title").textContent =
+          "Directorio Global de Clientes";
+      } else if (user.role === "manager") {
+        document.getElementById("crm-table-title").textContent =
+          "Clientes de la Tienda";
+      }
+
+      function getRoleName(role) {
+        switch (role) {
+          case "admin":
+            return "Administrador";
+          case "manager":
+            return "Gerente";
+          case "vendor":
+            return "Vendedor";
+          default:
+            return "Usuario";
+        }
+      }
+
+      function logout() {
+        sessionStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+      }
+
+      function saveRates() {
+        const usd = document.getElementById("usd-rate").value;
+        const eur = document.getElementById("eur-rate").value;
+        localStorage.setItem("exchangeRates", JSON.stringify({ usd, eur }));
+        alert("Tasas actualizadas correctamente");
+      }
+
+      // Load saved rates if any
+      const savedRates = localStorage.getItem("exchangeRates");
+      if (savedRates) {
+        const rates = JSON.parse(savedRates);
+        document.getElementById("usd-rate").value = rates.usd;
+        document.getElementById("eur-rate").value = rates.eur;
+      }
+
+      function formatMoney(amount) {
+        return new Intl.NumberFormat("es-MX", {
+          style: "currency",
+          currency: "MXN",
+        }).format(amount);
+      }
+
+      // Render CRM Table
+      async function renderCRMTable() {
+        const crmTableBody = document.getElementById("crm-table-body");
+
+        // Fetch mock data from JSON
+        let jsonQuotes = [];
+        try {
+          const response = await fetch("clients.json");
+          if (response.ok) {
+            jsonQuotes = await response.json();
+          }
+        } catch (error) {
+          console.error("Error loading clients.json:", error);
+        }
+
+        // Get local storage data
+        const localQuotes = JSON.parse(
+          localStorage.getItem("crm_quotes") || "[]"
+        );
+
+        // Merge data
+        const quotes = [...jsonQuotes, ...localQuotes];
+
+        let filteredQuotes = quotes;
+
+        // Role Filtering: Vendors only see their own
+        if (user.role === "vendor") {
+          filteredQuotes = quotes.filter((q) => q.user === user.id);
+        }
+
+        if (filteredQuotes.length === 0) {
+          crmTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">No hay cotizaciones registradas.</td></tr>`;
+          return;
+        }
+
+        // Sort by date desc
+        filteredQuotes.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        crmTableBody.innerHTML = filteredQuotes
+          .map((q) => {
+            const dateObj = new Date(q.date);
+            const dateStr = dateObj.toLocaleDateString("es-MX", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            });
+
+            let initials = "CM";
+            if (q.client.name) {
+              initials = q.client.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+            }
+
+            // Plan Colors (simplified mapping)
+            let badgeColor = "bg-blue-50 text-blue-600 border-blue-100";
+            if (q.plan.id && q.plan.id.includes("pink"))
+              badgeColor = "bg-pink-50 text-pink-600 border-pink-100";
+            if (q.plan.id && q.plan.id.includes("green"))
+              badgeColor = "bg-green-50 text-green-600 border-green-100";
+            if (q.plan.id && q.plan.id.includes("moto"))
+              badgeColor = "bg-amber-50 text-amber-600 border-amber-100";
+
+            const phoneLink = q.client.phone
+              ? `https://wa.me/${q.client.phone.replace(
+                  /\D/g,
+                  ""
+                )}?text=Hola ${encodeURIComponent(
+                  q.client.name
+                )}, te envío tu cotización de ${encodeURIComponent(
+                  q.vehicle.model
+                )}`
+              : "#";
+
+            return `
+              <tr class="hover:bg-slate-50 transition-colors group">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-xs border border-slate-200">
+                      ${initials}
+                    </div>
+                    <div>
+                      <div class="font-bold text-brand-dark">${
+                        q.client.name || "Cliente"
+                      }</div>
+                      <div class="text-xs text-slate-400">${
+                        q.client.email || "Sin correo"
+                      }</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="font-medium text-slate-700">${
+                    q.vehicle.model
+                  }</div>
+                  <div class="text-xs text-slate-400">${q.vehicle.year} • ${
+              q.vehicle.brand
+            }</div>
+                </td>
+                <td class="px-6 py-4 text-slate-500 text-xs">${dateStr}</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="px-3 py-1 rounded-full text-[10px] font-bold border ${badgeColor}">
+                    ${q.plan.name}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center font-bold text-slate-700">
+                  ${formatMoney(q.financials.totalInitial)}
+                  <div class="text-[10px] text-slate-400 font-normal">Inicial</div>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button class="text-slate-400 hover:text-brand-blue transition-colors px-2" title="Ver Detalles">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <a href="${phoneLink}" target="_blank" class="text-slate-400 hover:text-green-500 transition-colors px-2" title="Contactar Whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                  </a>
+                </td>
+              </tr>
+              `;
+          })
+          .join("");
+      }
+
+      // Initial Render
+      renderCRMTable();
+    </script>
+  </body>
+</html>

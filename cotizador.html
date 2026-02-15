@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cotizador de Autos | Car Marketing</title>
+    <meta
+      name="description"
+      content="Calcula tu financiamiento automotriz en segundos. Planes de Leasing, Green, Pink y Pagos Programados."
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ["Poppins", "sans-serif"] },
+            colors: {
+              brand: {
+                blue: "#0052CC",
+                light: "#E6F0FF",
+                dark: "#091E42",
+                accent: "#00C7E6",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8f9fb 0%, #ebf3ff 100%);
+        background-attachment: fixed;
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 32px rgba(9, 30, 66, 0.05);
+      }
+      .input-clean {
+        background: #fff;
+        border: 1px solid #dfe1e6;
+        transition: all 0.2s;
+      }
+      .input-clean:focus {
+        border-color: #0052cc;
+        box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: transparent;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 22px;
+        width: 22px;
+        border-radius: 50%;
+        background: white;
+        border: 6px solid currentColor;
+        cursor: pointer;
+        margin-top: -9px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 4px;
+        background: #dfe1e6;
+        border-radius: 2px;
+      }
+      .fade-in {
+        animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .whatsapp-float {
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+        }
+        50% {
+          box-shadow: 0 4px 30px rgba(37, 211, 102, 0.6);
+        }
+      }
+      .mobile-menu {
+        transform: translateX(100%);
+        transition: transform 0.3s;
+      }
+      .mobile-menu.open {
+        transform: translateX(0);
+      }
+      /* PDF Styles */
+      .pdf-table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 11px;
+      }
+      .pdf-table th,
+      .pdf-table td {
+        border: 1px solid #ccc;
+        padding: 6px 8px;
+        text-align: right;
+      }
+      .pdf-table th {
+        text-align: left;
+        background: #f5f5f5;
+      }
+      .pdf-table .header-row {
+        background: var(--plan-color) !important;
+        color: white !important;
+      }
+      .pdf-table .header-row th,
+      .pdf-table .header-row td {
+        border-color: var(--plan-color) !important;
+        color: white !important;
+        background: var(--plan-color) !important;
+      }
+      .pdf-table .highlight {
+        font-weight: 600;
+      }
+      .pdf-table .total-row {
+        background: var(--plan-color) !important;
+        color: white !important;
+        font-weight: 700;
+      }
+      .pdf-table .total-row th,
+      .pdf-table .total-row td {
+        background: var(--plan-color) !important;
+        color: white !important;
+        border-color: var(--plan-color) !important;
+      }
+      .pdf-table .section-title {
+        background: #f9f9f9;
+        font-weight: 600;
+        text-align: center;
+      }
+      .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 11px;
+      }
+      .benefit-icon {
+        width: 40px;
+        flex-shrink: 0;
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col font-sans text-slate-600 antialiased">
+    <!-- Background decorations -->
+    <div
+      class="fixed top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-400/5 blur-[120px] z-[-1]"
+    ></div>
+    <div
+      class="fixed bottom-[-10%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-cyan-400/5 blur-[100px] z-[-1]"
+    ></div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50">
+      <div
+        class="glass-panel mx-4 mt-4 rounded-full px-6 md:px-8 py-3 flex justify-between items-center max-w-7xl lg:mx-auto shadow-sm"
+      >
+        <div class="flex items-center gap-3">
+          <img
+            src="https://carmarketing.mx/wp-content/uploads/2023/10/carmarketing-blanco.jpeg"
+            alt="Car Marketing Logo"
+            class="h-10 md:h-12 w-auto object-contain"
+          />
+        </div>
+        <nav
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500"
+        >
+          <a
+            href="dashboard.html"
+            class="hover:text-brand-blue flex items-center gap-2"
+          >
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+          </a>
+          <!-- <a href="#" class="hover:text-brand-blue">Catálogo</a>
+          <a href="#" class="hover:text-brand-blue">Servicios</a> -->
+          <button
+            onclick="logout()"
+            class="flex items-center gap-2 text-slate-500 hover:text-red-600 transition-colors"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar sesión</span>
+          </button>
+        </nav>
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden w-10 h-10 flex items-center justify-center text-slate-600"
+        >
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
+      <div
+        id="mobile-menu"
+        class="mobile-menu fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 p-6"
+      >
+        <div class="flex justify-between items-center mb-8">
+          <span class="text-lg font-bold text-brand-dark">Menú</span>
+          <button
+            id="close-menu-btn"
+            class="w-10 h-10 flex items-center justify-center text-slate-500"
+          >
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <nav class="flex flex-col gap-4">
+          <a
+            href="dashboard.html"
+            class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-slate-50 text-slate-700 font-medium"
+            ><i class="fas fa-arrow-left w-5 text-brand-blue"></i> Dashboard</a
+          >
+          <button
+            onclick="logout()"
+            class="flex items-center gap-3 py-3 px-4 rounded-xl hover:bg-red-50 text-red-600 font-medium w-full text-left"
+          >
+            <i class="fas fa-sign-out-alt w-5"></i> Cerrar Sesión
+          </button>
+        </nav>
+      </div>
+      <div
+        id="menu-overlay"
+        class="fixed inset-0 bg-black/30 z-40 hidden"
+      ></div>
+    </header>
+
+    <main
+      class="flex-grow max-w-7xl mx-auto px-4 py-8 md:py-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 relative z-10"
+    >
+      <!-- LEFT COLUMN: CONTROLS -->
+      <div class="lg:col-span-7 space-y-6 md:space-y-8">
+        <div class="mb-2 md:mb-4">
+          <h1 class="text-3xl md:text-4xl font-bold text-brand-dark mb-2">
+            Cotizador Digital
+          </h1>
+          <p class="text-slate-500 text-base md:text-lg">
+            Personaliza tu plan de financiamiento en segundos.
+          </p>
+        </div>
+
+        <!-- Step 1: Datos del Cliente -->
+        <section class="glass-panel rounded-3xl p-6 md:p-8 fade-in">
+          <div class="flex items-center gap-4 mb-6 md:mb-8">
+            <div
+              class="w-10 h-10 rounded-full bg-blue-50 text-brand-blue flex items-center justify-center font-bold text-lg border border-blue-100"
+            >
+              1
+            </div>
+            <h2 class="text-lg md:text-xl font-bold text-brand-dark">
+              Datos del Cliente
+            </h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+            <div class="col-span-1 md:col-span-2 space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Nombre Completo</label
+              >
+              <input
+                type="text"
+                id="client-name"
+                placeholder="Nombre del cliente"
+                class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Correo Electrónico</label
+              >
+              <input
+                type="email"
+                id="client-email"
+                placeholder="correo@ejemplo.com"
+                class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Celular</label
+              >
+              <input
+                type="tel"
+                id="client-phone"
+                placeholder="55 1234 5678"
+                class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none"
+              />
+            </div>
+            <div class="col-span-1 md:col-span-2 flex justify-center mb-2">
+              <div
+                class="bg-slate-100 p-1.5 rounded-2xl flex w-full max-w-md border border-slate-200"
+              >
+                <button
+                  id="btn-male"
+                  class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm bg-white text-brand-dark"
+                  onclick="toggleGender('male')"
+                >
+                  <i class="fas fa-mars mr-2"></i>Hombre
+                </button>
+                <button
+                  id="btn-female"
+                  class="flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700"
+                  onclick="toggleGender('female')"
+                >
+                  <i class="fas fa-venus mr-2"></i>Mujer
+                </button>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Edad</label
+              >
+              <input
+                type="number"
+                id="client-age"
+                min="18"
+                placeholder="30"
+                max="99"
+                class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Código Postal</label
+              >
+              <input
+                type="text"
+                id="client-cp"
+                maxlength="5"
+                placeholder="14620"
+                class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none"
+              />
+            </div>
+            <div class="col-span-1 md:col-span-2 space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Perfil del Cliente</label
+              >
+              <div class="relative">
+                <select
+                  id="client-profile"
+                  class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none appearance-none cursor-pointer"
+                >
+                  <option value="asalariado">Selecione un perfil</option>
+                  <option value="asalariado">Asalariado</option>
+                  <option value="profesionista">Profesionista</option>
+                  <option value="comerciante">Comerciante</option>
+                  <option value="persona_moral">Persona Moral</option>
+                </select>
+                <div
+                  class="absolute right-5 top-4 pointer-events-none text-brand-blue"
+                >
+                  <i class="fas fa-chevron-down text-xs"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2: Datos del Vehículo -->
+        <section
+          class="glass-panel rounded-3xl p-6 md:p-8 fade-in"
+          style="animation-delay: 0.1s"
+        >
+          <div class="flex items-center gap-4 mb-6 md:mb-8">
+            <div
+              class="w-10 h-10 rounded-full bg-blue-50 text-brand-blue flex items-center justify-center font-bold text-lg border border-blue-100"
+            >
+              2
+            </div>
+            <h2 class="text-lg md:text-xl font-bold text-brand-dark">
+              Datos del Vehículo
+            </h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+            <div class="col-span-1 md:col-span-2 flex justify-center mb-2">
+              <div
+                class="bg-slate-100 p-1.5 rounded-2xl flex w-full max-w-md border border-slate-200"
+              >
+                <button
+                  id="btn-new"
+                  class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm bg-white text-brand-dark"
+                  onclick="toggleCondition('new')"
+                >
+                  Nuevo
+                </button>
+                <button
+                  id="btn-used"
+                  class="flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700"
+                  onclick="toggleCondition('used')"
+                >
+                  Seminuevo
+                </button>
+              </div>
+            </div>
+            <!-- Tipo de Vehículo -->
+            <div class="col-span-1 md:col-span-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1 block mb-3"
+                >Tipo de Vehículo</label
+              >
+              <div class="grid grid-cols-5 gap-2">
+                <button
+                  onclick="selectVehicleType('auto')"
+                  id="vtype-auto"
+                  class="vehicle-type-btn active flex flex-col items-center p-3 rounded-xl bg-white border-2 border-brand-blue text-brand-blue shadow-sm"
+                >
+                  <i class="fas fa-car text-xl mb-1"></i
+                  ><span class="text-[10px] font-bold">Auto</span>
+                </button>
+                <button
+                  onclick="selectVehicleType('camion')"
+                  id="vtype-camion"
+                  class="vehicle-type-btn flex flex-col items-center p-3 rounded-xl bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white"
+                >
+                  <i class="fas fa-truck text-xl mb-1"></i
+                  ><span class="text-[10px] font-bold">Camión</span>
+                </button>
+                <button
+                  onclick="selectVehicleType('tracto')"
+                  id="vtype-tracto"
+                  class="vehicle-type-btn flex flex-col items-center p-3 rounded-xl bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white"
+                >
+                  <i class="fas fa-truck-moving text-xl mb-1"></i
+                  ><span class="text-[10px] font-bold">Tracto</span>
+                </button>
+                <button
+                  onclick="selectVehicleType('bus')"
+                  id="vtype-bus"
+                  class="vehicle-type-btn flex flex-col items-center p-3 rounded-xl bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white"
+                >
+                  <i class="fas fa-bus text-xl mb-1"></i
+                  ><span class="text-[10px] font-bold">Bus</span>
+                </button>
+                <button
+                  onclick="selectVehicleType('moto')"
+                  id="vtype-moto"
+                  class="vehicle-type-btn flex flex-col items-center p-3 rounded-xl bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white"
+                >
+                  <i class="fas fa-motorcycle text-xl mb-1"></i
+                  ><span class="text-[10px] font-bold">Moto</span>
+                </button>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Precio (Con IVA)</label
+              >
+              <div class="relative">
+                <span class="absolute left-4 top-3.5 text-slate-400 font-medium"
+                  >$</span
+                >
+                <input
+                  type="text"
+                  id="vehicle-price"
+                  value="0"
+                  placeholder="0.00"
+                  class="input-clean w-full rounded-2xl py-3 pl-8 pr-4 font-semibold text-brand-dark focus:outline-none"
+                  oninput="formatPrice(this); updateCalculations()"
+                />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Accesorios</label
+              >
+              <div class="relative">
+                <span class="absolute left-4 top-3.5 text-slate-400 font-medium"
+                  >$</span
+                >
+                <input
+                  type="text"
+                  id="accessories-price"
+                  value="0"
+                  class="input-clean w-full rounded-2xl py-3 pl-8 pr-4 font-semibold text-brand-dark focus:outline-none"
+                  oninput="formatPrice(this); updateCalculations()"
+                />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Marca</label
+              >
+              <div class="relative">
+                <select
+                  id="brand-select"
+                  class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none appearance-none cursor-pointer"
+                >
+                  <option>Seleccione una marca</option>
+                  <option>Volkswagen</option>
+                  <option>Toyota</option>
+                  <option>BYD</option>
+                  <option>Ford</option>
+                  <option>Mercedes-Benz</option>
+                  <option>BMW</option>
+                  <option>Audi</option>
+                  <option>Honda</option>
+                  <option>Mazda</option>
+                  <option>Nissan</option>
+                  <option>Chevrolet</option>
+                  <option>KIA</option>
+                  <option>Hyundai</option>
+                  <option>Suzuki</option>
+                  <option>Yamaha</option>
+                  <option>Otra</option>
+                </select>
+                <div
+                  class="absolute right-5 top-4 pointer-events-none text-brand-blue"
+                >
+                  <i class="fas fa-chevron-down text-xs"></i>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Año / Modelo</label
+              >
+              <input
+                type="text"
+                id="year-input"
+                value="2025"
+                class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none"
+              />
+            </div>
+            <div class="col-span-1 md:col-span-2 space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1"
+                >Versión / Modelo</label
+              >
+              <input
+                type="text"
+                id="model-input"
+                placeholder="Modelo y Versión"
+                class="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3: Producto y Configuración -->
+        <section
+          class="glass-panel rounded-3xl p-6 md:p-8 fade-in"
+          style="animation-delay: 0.2s"
+        >
+          <div class="flex items-center gap-4 mb-6 md:mb-8">
+            <div
+              id="step-3-badge"
+              class="w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center font-bold text-lg"
+            >
+              3
+            </div>
+            <h2 class="text-lg md:text-xl font-bold text-brand-dark">
+              Selecciona tu Producto
+            </h2>
+          </div>
+          <!-- 9 Productos en Grid -->
+          <div class="grid grid-cols-3 gap-2 md:gap-3 mb-8 md:mb-10">
+            <button
+              onclick="selectPlan('credito_normal')"
+              id="tab-credito_normal"
+              class="plan-tab active relative bg-white border-2 border-brand-blue text-brand-blue shadow-lg py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <i class="fas fa-credit-card mb-1 md:mb-2 text-lg md:text-xl"></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Crédito Normal</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('pagos_programados')"
+              id="tab-pagos_programados"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i
+                class="fas fa-calendar-check mb-1 md:mb-2 text-lg md:text-xl"
+              ></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Pagos Prog.</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('smart_credit')"
+              id="tab-smart_credit"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i class="fas fa-bolt mb-1 md:mb-2 text-lg md:text-xl"></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Smart Credit</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('pink_credit')"
+              id="tab-pink_credit"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i class="fas fa-heart mb-1 md:mb-2 text-lg md:text-xl"></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Pink Credit</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('green_credit')"
+              id="tab-green_credit"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i class="fas fa-leaf mb-1 md:mb-2 text-lg md:text-xl"></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Green Credit</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('arrendamiento')"
+              id="tab-arrendamiento"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i class="fas fa-briefcase mb-1 md:mb-2 text-lg md:text-xl"></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Arr. Puro</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('green_leasing')"
+              id="tab-green_leasing"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i
+                class="fas fa-charging-station mb-1 md:mb-2 text-lg md:text-xl"
+              ></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Green Leasing</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('moto_credit')"
+              id="tab-moto_credit"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i class="fas fa-motorcycle mb-1 md:mb-2 text-lg md:text-xl"></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Moto Credit</span
+              >
+            </button>
+            <button
+              onclick="selectPlan('leasing_moto')"
+              id="tab-leasing_moto"
+              class="plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300"
+            >
+              <i class="fas fa-bicycle mb-1 md:mb-2 text-lg md:text-xl"></i>
+              <span
+                class="text-[9px] md:text-[10px] font-bold uppercase leading-tight text-center"
+                >Leasing Moto</span
+              >
+            </button>
+          </div>
+          <!-- Sliders de configuración -->
+          <div class="space-y-8 md:space-y-10 px-2">
+            <!-- Plazo: 6-120 meses -->
+            <div>
+              <div class="flex justify-between items-end mb-4">
+                <label
+                  class="text-sm font-bold text-slate-500 uppercase tracking-wide"
+                  >Plazo (Meses)</label
+                >
+                <span
+                  id="term-display"
+                  class="text-2xl md:text-3xl font-bold text-brand-blue"
+                  >36</span
+                >
+              </div>
+              <div class="relative h-6 flex items-center">
+                <input
+                  type="range"
+                  id="term-slider"
+                  min="6"
+                  max="120"
+                  step="6"
+                  value="36"
+                  class="w-full z-20 focus:outline-none text-brand-blue"
+                  oninput="updateCalculations()"
+                />
+                <div
+                  class="absolute w-full h-2 bg-slate-100 rounded-full z-10 border border-slate-200"
+                ></div>
+                <div
+                  id="term-progress"
+                  class="absolute h-2 bg-brand-blue rounded-full z-10"
+                  style="width: 26%"
+                ></div>
+              </div>
+              <div
+                class="flex justify-between text-xs font-semibold text-slate-400 mt-3 px-1"
+              >
+                <span>6</span><span>36</span><span>60</span><span>84</span
+                ><span>120</span>
+              </div>
+            </div>
+            <!-- Enganche: 5-90% -->
+            <div>
+              <div class="flex justify-between items-end mb-4">
+                <label
+                  class="text-sm font-bold text-slate-500 uppercase tracking-wide"
+                  >Enganche</label
+                >
+                <span
+                  id="downpayment-display"
+                  class="text-2xl md:text-3xl font-bold text-brand-blue"
+                  >20%</span
+                >
+              </div>
+              <div class="relative h-6 flex items-center">
+                <input
+                  type="range"
+                  id="downpayment-slider"
+                  min="5"
+                  max="90"
+                  step="5"
+                  value="20"
+                  class="w-full z-20 focus:outline-none text-brand-blue"
+                  oninput="updateCalculations()"
+                />
+                <div
+                  class="absolute w-full h-2 bg-slate-100 rounded-full z-10 border border-slate-200"
+                ></div>
+                <div
+                  id="downpayment-progress"
+                  class="absolute h-2 bg-brand-blue rounded-full z-10"
+                  style="width: 18%"
+                ></div>
+              </div>
+              <div
+                class="flex justify-between text-xs font-semibold text-slate-400 mt-3 px-1"
+              >
+                <span>5%</span><span>25%</span><span>50%</span><span>75%</span
+                ><span>90%</span>
+              </div>
+            </div>
+            <!-- Configuración Avanzada -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <!-- Método de Cotización -->
+              <div>
+                <label
+                  class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1 block mb-2"
+                  >Método de Cálculo</label
+                >
+                <div class="relative">
+                  <select
+                    id="method-selector"
+                    class="input-clean w-full rounded-2xl py-2 px-4 font-semibold text-brand-dark focus:outline-none appearance-none cursor-pointer text-sm"
+                    onchange="updateCalculations()"
+                  >
+                    <option value="french">Tradicional (Amort. Gradual)</option>
+                    <option value="german">Alemán (Amort. Constante)</option>
+                    <option value="leasing" disabled>
+                      Arrendamiento (Rentas)
+                    </option>
+                  </select>
+                  <div
+                    class="absolute right-4 top-3 pointer-events-none text-brand-blue"
+                  >
+                    <i class="fas fa-chevron-down text-xs"></i>
+                  </div>
+                </div>
+              </div>
+              <!-- Moneda -->
+              <div>
+                <label
+                  class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1 block mb-2"
+                  >Moneda</label
+                >
+                <div class="flex bg-slate-100 rounded-2xl p-1">
+                  <button
+                    onclick="toggleCurrency('MXN')"
+                    id="curr-mxn"
+                    class="flex-1 py-1.5 rounded-xl text-xs font-bold shadow-sm bg-white text-brand-blue transition-all"
+                  >
+                    MXN
+                  </button>
+                  <button
+                    onclick="toggleCurrency('USD')"
+                    id="curr-usd"
+                    class="flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-700 transition-all"
+                  >
+                    USD
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagos Programados (Abonos) Section -->
+            <div
+              id="scheduled-payments-section"
+              class="hidden mb-8 bg-blue-50/50 border border-brand-blue/20 rounded-2xl p-4"
+            >
+              <div class="flex justify-between items-center mb-4">
+                <h4 class="font-bold text-brand-dark text-sm">
+                  <i class="fas fa-calendar-alt text-brand-blue mr-2"></i>Pagos
+                  Programados (Abonos a Capital)
+                </h4>
+                <button
+                  onclick="addScheduledPaymentRow()"
+                  class="text-xs bg-brand-blue text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  <i class="fas fa-plus mr-1"></i>Agregar
+                </button>
+              </div>
+              <div id="scheduled-payments-container" class="space-y-3">
+                <!-- Dynamic Rows will be added here -->
+              </div>
+              <div class="mt-3 text-right">
+                <p class="text-xs text-slate-500">
+                  Total Programado:
+                  <span
+                    id="total-scheduled-display"
+                    class="font-bold text-brand-dark"
+                    >$0.00</span
+                  >
+                </p>
+              </div>
+            </div>
+
+            <!-- Tasa de Interés: 0-35% -->
+            <div>
+              <div class="flex justify-between items-end mb-4">
+                <label
+                  class="text-sm font-bold text-slate-500 uppercase tracking-wide"
+                  >Tasa de Interés Anual</label
+                >
+                <div class="flex items-center gap-2">
+                  <span
+                    id="rate-display"
+                    class="text-2xl md:text-3xl font-bold text-brand-blue"
+                    >15.9</span
+                  >
+                  <span class="text-lg font-bold text-brand-blue">%</span>
+                </div>
+              </div>
+              <div class="relative h-6 flex items-center">
+                <input
+                  type="range"
+                  id="rate-slider"
+                  min="0"
+                  max="35"
+                  step="0.1"
+                  value="15.9"
+                  class="w-full z-20 focus:outline-none text-brand-blue"
+                  oninput="updateCalculations()"
+                />
+                <div
+                  class="absolute w-full h-2 bg-slate-100 rounded-full z-10 border border-slate-200"
+                ></div>
+                <div
+                  id="rate-progress"
+                  class="absolute h-2 bg-brand-blue rounded-full z-10"
+                  style="width: 45%"
+                ></div>
+              </div>
+              <div
+                class="flex justify-between text-xs font-semibold text-slate-400 mt-3 px-1"
+              >
+                <span>0% (MSI)</span><span>15%</span><span>25%</span
+                ><span>35%</span>
+              </div>
+              <div
+                id="admin-rate-container"
+                class="hidden mt-3 bg-red-50 border border-red-100 p-2 rounded-lg"
+              >
+                <label
+                  class="text-[10px] font-bold text-red-500 uppercase block mb-1"
+                  >Tasa Preferencial (Admin)</label
+                >
+                <div class="flex gap-2">
+                  <input
+                    type="number"
+                    id="admin-rate-input"
+                    class="w-full text-xs border border-red-200 rounded px-2 py-1 text-red-700 font-bold"
+                    placeholder="Tasa %"
+                    step="0.1"
+                  />
+                  <button
+                    onclick="applyAdminRate()"
+                    class="bg-red-500 text-white text-[10px] uppercase font-bold px-3 py-1 rounded hover:bg-red-600 transition-colors"
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Info del Plan -->
+          <div
+            id="plan-info"
+            class="mt-8 md:mt-10 bg-blue-50/50 border border-blue-100 rounded-2xl p-4 md:p-5 flex items-start gap-4"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm text-brand-blue"
+              id="plan-icon-container"
+            >
+              <i id="plan-icon" class="fas fa-credit-card"></i>
+            </div>
+            <div>
+              <h4
+                id="plan-title-small"
+                class="font-bold text-brand-dark text-sm mb-1"
+              >
+                Crédito Normal
+              </h4>
+              <p id="plan-desc" class="text-sm text-slate-500 leading-relaxed">
+                Financiamiento tradicional con tasa fija. Ideal para adquirir tu
+                vehículo con mensualidades fijas.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN: PREVIEW -->
+      <div class="lg:col-span-5 relative">
+        <div class="sticky top-28">
+          <div
+            class="bg-white rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-900/5"
+          >
+            <div
+              class="bg-slate-50 p-6 md:p-8 border-b border-slate-100 relative"
+            >
+              <div class="absolute top-0 right-0 p-6 opacity-5">
+                <i class="fas fa-file-invoice-dollar fa-5x text-brand-blue"></i>
+              </div>
+              <div class="relative z-10">
+                <div class="flex justify-between items-start mb-4">
+                  <div
+                    class="bg-brand-blue text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded"
+                  >
+                    Pre-Cotización
+                  </div>
+                  <div class="text-slate-400 text-xs font-mono" id="quote-id">
+                    ID: #CM-2026-X8
+                  </div>
+                </div>
+                <h3
+                  id="preview-title"
+                  class="text-xl md:text-2xl font-bold text-brand-dark mb-1"
+                >
+                  Arrendamiento Puro
+                </h3>
+                <p class="text-sm text-slate-500">
+                  Resumen estimado de inversión
+                </p>
+              </div>
+            </div>
+            <div class="p-6 md:p-8 space-y-6 md:space-y-8">
+              <div
+                class="text-center bg-brand-light/30 rounded-2xl p-5 md:p-6 border border-brand-light"
+              >
+                <p
+                  class="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-2"
+                >
+                  Pago Mensual Estimado
+                </p>
+                <div class="flex items-baseline justify-center">
+                  <span class="text-xl md:text-2xl mr-1 font-medium opacity-40"
+                    >$</span
+                  >
+                  <span
+                    id="monthly-payment"
+                    class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-brand-blue"
+                    >23,842</span
+                  >
+                  <span
+                    id="monthly-cents"
+                    class="text-lg md:text-xl ml-1 text-slate-400 font-bold"
+                    >.29</span
+                  >
+                </div>
+                <p
+                  class="text-xs text-brand-blue mt-2 font-medium bg-white inline-block px-3 py-1 rounded-full border border-blue-100 shadow-sm"
+                >
+                  IVA Incluido
+                </p>
+              </div>
+              <!-- Tasa y CAT -->
+              <div class="grid grid-cols-2 gap-3">
+                <div
+                  class="bg-slate-50 rounded-xl p-3 text-center border border-slate-100"
+                >
+                  <p
+                    class="text-[10px] text-slate-400 uppercase font-semibold mb-1"
+                  >
+                    Tasa Anual
+                  </p>
+                  <p
+                    id="rate-display-preview"
+                    class="text-lg font-bold text-brand-blue"
+                  >
+                    15.9%
+                  </p>
+                </div>
+                <div
+                  class="bg-slate-50 rounded-xl p-3 text-center border border-slate-100"
+                >
+                  <p
+                    class="text-[10px] text-slate-400 uppercase font-semibold mb-1"
+                  >
+                    CAT
+                  </p>
+                  <p id="cat-display" class="text-lg font-bold text-green-600">
+                    17.2%
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-4 px-1 md:px-2">
+                <div
+                  class="flex items-center justify-between border-b border-slate-100 pb-3"
+                >
+                  <span class="text-slate-500 text-sm"
+                    >1er Pago / Enganche</span
+                  >
+                  <span
+                    id="initial-rent"
+                    class="text-brand-dark font-semibold text-base md:text-lg"
+                    >$23,842.29</span
+                  >
+                </div>
+                <div
+                  class="flex items-center justify-between border-b border-slate-100 pb-3"
+                >
+                  <span class="text-slate-500 text-sm"
+                    >Comisión x Apertura</span
+                  >
+                  <span id="comision-display" class="text-slate-700 font-medium"
+                    >$21,399.68</span
+                  >
+                </div>
+                <div
+                  class="flex items-center justify-between border-b border-slate-100 pb-3"
+                >
+                  <span class="text-slate-500 text-sm">Seguro (Contado)</span>
+                  <span id="seguro-display" class="text-slate-700 font-medium"
+                    >$20,064.84</span
+                  >
+                </div>
+                <div class="flex items-center justify-between pb-1">
+                  <span class="text-slate-500 text-sm"
+                    >Lo Jack (GPS)
+                    <i
+                      class="fas fa-check-circle text-xs text-green-500 ml-1"
+                    ></i
+                  ></span>
+                  <span id="lojack-display" class="text-slate-700 font-medium"
+                    >$10,805.40</span
+                  >
+                </div>
+                <div
+                  class="bg-slate-900 rounded-xl p-4 md:p-5 flex justify-between items-center mt-4 shadow-lg"
+                >
+                  <div>
+                    <p
+                      class="text-slate-400 text-[10px] uppercase tracking-wider font-bold"
+                    >
+                      Inversión Inicial Total
+                    </p>
+                    <p class="text-slate-500 text-[10px]">(Aprox.)</p>
+                  </div>
+                  <span
+                    id="total-initial"
+                    class="text-xl md:text-2xl font-bold text-white tracking-tight"
+                    >$104,818.49</span
+                  >
+                </div>
+              </div>
+              <div class="space-y-4 pt-2">
+                <div
+                  id="benefits-container"
+                  class="grid grid-cols-1 gap-2 mb-2 p-3 bg-slate-50 rounded-xl border border-slate-100"
+                >
+                  <!-- Benefits injected via JS -->
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    onclick="saveQuote()"
+                    class="bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:bg-slate-700 transition-all duration-300 transform hover:-translate-y-0.5 flex justify-center items-center gap-2 text-xs md:text-sm"
+                  >
+                    <i class="fas fa-save"></i> Guardar
+                  </button>
+                  <button
+                    id="cta-button"
+                    onclick="openPDFModal()"
+                    class="bg-brand-blue text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:bg-blue-600 transition-all duration-300 transform hover:-translate-y-0.5 flex justify-center items-center gap-2 text-xs md:text-sm"
+                  >
+                    <i class="fas fa-file-pdf"></i> PDF
+                  </button>
+                </div>
+                <p class="text-[10px] text-center text-slate-400">
+                  <i class="fas fa-lock mr-1"></i> Sujeto a aprobación de
+                  crédito.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-100 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <img
+                src="https://carmarketing.mx/wp-content/uploads/2023/10/carmarketing-blanco.jpeg"
+                alt="Car Marketing Logo"
+                class="h-10 w-auto object-contain"
+              />
+            </div>
+            <p class="text-sm text-slate-500">
+              Tu aliado en financiamiento automotriz. Soluciones personalizadas
+              para personas y empresas.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <h4
+              class="font-bold text-brand-dark text-sm uppercase tracking-wider"
+            >
+              Contacto
+            </h4>
+            <ul class="space-y-3 text-sm text-slate-500">
+              <li class="flex items-center gap-2">
+                <i class="fas fa-phone-alt text-brand-blue text-xs"></i
+                ><a href="tel:5525892843">55 2589 2843</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fas fa-envelope text-brand-blue text-xs"></i
+                ><a href="mailto:info@carmarketing.mx">info@carmarketing.mx</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <i class="fas fa-map-marker-alt text-brand-blue text-xs"></i
+                >Ciudad de México
+              </li>
+            </ul>
+          </div>
+          <div class="space-y-4">
+            <h4
+              class="font-bold text-brand-dark text-sm uppercase tracking-wider"
+            >
+              Legal
+            </h4>
+            <ul class="space-y-3 text-sm text-slate-500">
+              <li><a href="#">Aviso de Privacidad</a></li>
+              <li><a href="#">Términos y Condiciones</a></li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="border-t border-slate-100 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p class="text-xs text-slate-400">
+            © 2026 Car Marketing. Todos los derechos reservados.
+          </p>
+          <div class="flex items-center gap-4">
+            <a
+              href="#"
+              class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-white"
+              ><i class="fab fa-facebook-f text-sm"></i
+            ></a>
+            <a
+              href="#"
+              class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-white"
+              ><i class="fab fa-instagram text-sm"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <!-- <a
+      href="https://wa.me/5215525892843?text=Hola!%20Me%20interesa%20una%20cotización"
+      target="_blank"
+      class="whatsapp-float fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform z-50"
+    >
+      <i class="fab fa-whatsapp text-2xl"></i>
+    </a> -->
+
+    <!-- PDF Modal -->
+    <div
+      id="pdf-modal"
+      class="fixed inset-0 z-[60] hidden items-center justify-center p-4 overflow-y-auto"
+    >
+      <div
+        class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onclick="closePDFModal()"
+      ></div>
+      <div
+        class="relative bg-white rounded-2xl max-w-4xl w-full my-8 shadow-2xl transform transition-all"
+        id="modal-content"
+      >
+        <div
+          class="sticky top-0 bg-white border-b border-slate-100 p-4 flex justify-between items-center rounded-t-2xl z-10"
+        >
+          <h3 class="text-lg font-bold text-brand-dark">
+            Vista Previa de Cotización
+          </h3>
+          <div class="flex items-center gap-3">
+            <button
+              onclick="downloadPDF()"
+              class="bg-brand-blue text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-sm"
+            >
+              <i class="fas fa-download"></i> Descargar PDF
+            </button>
+            <button
+              onclick="closePDFModal()"
+              class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-700"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[80vh]"
+          id="pdf-preview-container"
+        >
+          <div
+            id="pdf-content"
+            class="bg-white"
+            style="font-family: Arial, sans-serif; padding: 15px; width: 100%"
+          >
+            <!-- PDF content will be generated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ======================= CONFIGURACIÓN DE PRODUCTOS =======================
+      const plans = {
+        credito_normal: {
+          color: "#0052CC",
+          title: "Crédito Normal",
+          pdfTitle: "COTIZACIÓN CRÉDITO NORMAL",
+          desc: "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+          icon: "fas fa-credit-card",
+          bgClass: "bg-blue-50/50",
+          borderClass: "border-blue-100",
+          isLeasing: false,
+          defaultRate: 15.9,
+          benefits: [
+            "Financiamiento tradicional con tasa fija",
+            "Mensualidades constantes durante todo el plazo",
+            "Liquidación anticipada sin penalización",
+            "Multimarca: Autos, Motos, Camiones",
+          ],
+        },
+        pagos_programados: {
+          color: "#0052CC",
+          title: "Crédito Pagos Programados",
+          pdfTitle: "COTIZACIÓN CRÉDITO PAGOS PROGRAMADOS",
+          desc: "Reduce tu mensualidad aportando pagos anuales programados.",
+          icon: "fas fa-calendar-check",
+          bgClass: "bg-sky-50/50",
+          borderClass: "border-sky-100",
+          isLeasing: false,
+          defaultRate: 18.49,
+          benefits: [
+            "Disminuye tu PAGO MENSUAL desde el inicio",
+            "Pagos anuales programados para mayor flexibilidad",
+            "Liquidación anticipada SIN PENALIZACIÓN",
+            "Multimarca: Autos, Motos, Camiones y Buses",
+          ],
+        },
+        smart_credit: {
+          color: "#6366F1",
+          title: "Smart Credit",
+          pdfTitle: "COTIZACIÓN SMART CREDIT",
+          desc: "Crédito inteligente con beneficios flexibles y tasa competitiva.",
+          icon: "fas fa-bolt",
+          bgClass: "bg-indigo-50/50",
+          borderClass: "border-indigo-100",
+          isLeasing: false,
+          defaultRate: 14.9,
+          benefits: [
+            "Tasa preferencial competitiva",
+            "Proceso de aprobación rápido",
+            "Sin comisión por apertura",
+            "Ideal para clientes con buen historial",
+          ],
+        },
+        pink_credit: {
+          color: "#EC4899",
+          title: "Pink Credit",
+          pdfTitle: "COTIZACIÓN PINK CREDIT",
+          desc: "Crédito exclusivo para mujeres con beneficios especiales.",
+          icon: "fas fa-heart",
+          bgClass: "bg-pink-50/50",
+          borderClass: "border-pink-100",
+          isLeasing: false,
+          defaultRate: 15.9,
+          benefits: [
+            "Exclusivo para Mujeres de 22 a 78 años",
+            "Tasa preferencial y seguro de vida incluido",
+            "Flexibilidad con historial crediticio",
+            "Aportaciones a capital SIN PENALIZACIÓN",
+          ],
+        },
+        green_credit: {
+          color: "#10B981",
+          title: "Green Credit",
+          pdfTitle: "COTIZACIÓN GREEN CREDIT",
+          desc: "Financiamiento especial para vehículos híbridos y eléctricos.",
+          icon: "fas fa-leaf",
+          bgClass: "bg-green-50/50",
+          borderClass: "border-green-100",
+          isLeasing: false,
+          defaultRate: 12.9,
+          benefits: [
+            "Tasa preferencial para híbridos/eléctricos",
+            "Exentos de verificación hasta 8 años",
+            "Sin pago de ISAN y Tenencia",
+            "Contribuye al medio ambiente",
+          ],
+        },
+        arrendamiento: {
+          color: "#0052CC",
+          title: "Arrendamiento Puro",
+          pdfTitle: "COTIZACIÓN ARRENDAMIENTO PURO",
+          desc: "Deduce al 100% las rentas. Ideal para personas físicas con actividad empresarial.",
+          icon: "fas fa-briefcase",
+          bgClass: "bg-blue-50/50",
+          borderClass: "border-blue-100",
+          isLeasing: true,
+          defaultRate: 0,
+          benefits: [
+            "Rentas 100% Deducibles de Impuestos",
+            "Opción de compra al término del contrato",
+            "Ideal para estrategia fiscal empresarial",
+            "Renovación constante de flota vehicular",
+          ],
+        },
+        green_leasing: {
+          color: "#059669",
+          title: "Green Leasing",
+          pdfTitle: "COTIZACIÓN GREEN LEASING",
+          desc: "Arrendamiento para vehículos híbridos y eléctricos con beneficios fiscales.",
+          icon: "fas fa-charging-station",
+          bgClass: "bg-emerald-50/50",
+          borderClass: "border-emerald-100",
+          isLeasing: true,
+          defaultRate: 0,
+          benefits: [
+            "Rentas 100% Deducibles",
+            "Exentos de verificación ambiental",
+            "Sin pago de ISAN y Tenencia",
+            "Vehículos híbridos o eléctricos $285/día deducibles",
+          ],
+        },
+        moto_credit: {
+          color: "#F59E0B",
+          title: "Moto-Bike Credit",
+          pdfTitle: "COTIZACIÓN MOTO-BIKE CREDIT",
+          desc: "Crédito especializado para motocicletas y bicicletas eléctricas.",
+          icon: "fas fa-motorcycle",
+          bgClass: "bg-amber-50/50",
+          borderClass: "border-amber-100",
+          isLeasing: false,
+          defaultRate: 16.9,
+          benefits: [
+            "Especializado en motos y bicis eléctricas",
+            "Plazos flexibles de 12 a 60 meses",
+            "Enganche desde el 10%",
+            "Proceso de aprobación ágil",
+          ],
+        },
+        leasing_moto: {
+          color: "#D97706",
+          title: "Leasing Moto-Bike",
+          pdfTitle: "COTIZACIÓN LEASING MOTO-BIKE",
+          desc: "Arrendamiento para motos con beneficios fiscales.",
+          icon: "fas fa-bicycle",
+          bgClass: "bg-orange-50/50",
+          borderClass: "border-orange-100",
+          isLeasing: true,
+          defaultRate: 0,
+          benefits: [
+            "Rentas deducibles para motos",
+            "Ideal para flotillas de mensajería",
+            "Opción de compra al final",
+            "Renovación constante del vehículo",
+          ],
+        },
+      };
+
+      // ======================= VARIABLES GLOBALES =======================
+      let currentPlan = "credito_normal";
+      let isNewVehicle = true;
+      let isMale = true;
+      let vehicleType = "auto";
+      let currentCurrency = "MXN"; // New
+      let exchangeRates = { USD: 19.5, MXN: 1 }; // Default
+      let calculatedData = {};
+      let amortizationTable = [];
+
+      // Init rates from storage if available
+      const storedRates = localStorage.getItem("exchangeRates");
+      if (storedRates) {
+        const rates = JSON.parse(storedRates);
+        exchangeRates.USD = parseFloat(rates.usd) || 19.5;
+      }
+
+      // ======================= FUNCIONES UTILITARIAS =======================
+      function formatPrice(input) {
+        let value = input.value.replace(/[^\d.]/g, "");
+        let parts = value.split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        if (parts.length > 2) parts = [parts[0], parts.slice(1).join("")];
+        if (parts[1] && parts[1].length > 2)
+          parts[1] = parts[1].substring(0, 2);
+        input.value = parts.join(".");
+      }
+      function parsePrice(str) {
+        return parseFloat(str.replace(/,/g, "")) || 0;
+      }
+      function formatMoney(num) {
+        return new Intl.NumberFormat("es-MX", {
+          style: "currency",
+          currency: currentCurrency,
+          minimumFractionDigits: 2,
+        }).format(num);
+      }
+
+      // ======================= MONEDA =======================
+      function toggleCurrency(curr) {
+        currentCurrency = curr;
+        const btnMXN = document.getElementById("curr-mxn");
+        const btnUSD = document.getElementById("curr-usd");
+
+        if (curr === "MXN") {
+          btnMXN.className =
+            "flex-1 py-1.5 rounded-xl text-xs font-bold shadow-sm bg-white text-brand-blue transition-all";
+          btnUSD.className =
+            "flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-700 transition-all";
+        } else {
+          btnUSD.className =
+            "flex-1 py-1.5 rounded-xl text-xs font-bold shadow-sm bg-white text-brand-blue transition-all";
+          btnMXN.className =
+            "flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-700 transition-all";
+        }
+        updateCalculations();
+      }
+
+      // ======================= PAGOS PROGRAMADOS =======================
+      function addScheduledPaymentRow() {
+        const container = document.getElementById(
+          "scheduled-payments-container"
+        );
+        const id = Date.now();
+        const row = document.createElement("div");
+        row.className = "flex gap-2 items-center scheduled-row mb-2";
+        row.id = `sp-${id}`;
+        row.innerHTML = `
+            <div class="relative w-1/2">
+                <input type="date" class="sp-date input-clean w-full rounded-xl py-2 px-3 text-xs font-medium text-slate-600 focus:outline-none focus:border-brand-blue" onchange="updateCalculations()">
+            </div>
+            <div class="relative w-1/2">
+                <span class="absolute left-3 top-2 text-slate-400 text-xs">$</span>
+                <input type="text" class="sp-amount input-clean w-full rounded-xl py-2 pl-6 pr-2 text-xs font-bold text-brand-dark focus:outline-none focus:border-brand-blue" placeholder="0.00" oninput="formatPrice(this); updateCalculations()">
+            </div>
+            <button onclick="removeScheduledPaymentRow('${id}')" class="text-slate-400 hover:text-red-500 px-1"><i class="fas fa-trash-alt"></i></button>
+        `;
+        container.appendChild(row);
+      }
+
+      function removeScheduledPaymentRow(id) {
+        document.getElementById(`sp-${id}`).remove();
+        updateCalculations();
+      }
+
+      function getScheduledPaymentsTotal() {
+        let total = 0;
+        document.querySelectorAll(".scheduled-row").forEach((row) => {
+          const amount = parsePrice(row.querySelector(".sp-amount").value);
+          total += amount;
+        });
+        return total;
+      }
+
+      // ======================= TOGGLE GÉNERO =======================
+      function toggleGender(gender) {
+        isMale = gender === "male";
+        const btnMale = document.getElementById("btn-male");
+        const btnFemale = document.getElementById("btn-female");
+        if (isMale) {
+          btnMale.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm bg-white text-brand-dark";
+          btnFemale.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700";
+        } else {
+          btnFemale.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm bg-white text-brand-dark";
+          btnMale.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700";
+        }
+        updateCalculations();
+      }
+
+      // ======================= TIPO DE VEHÍCULO =======================
+      function selectVehicleType(type) {
+        vehicleType = type;
+        document.querySelectorAll(".vehicle-type-btn").forEach((btn) => {
+          btn.className =
+            "vehicle-type-btn flex flex-col items-center p-3 rounded-xl bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white";
+        });
+        const activeBtn = document.getElementById(`vtype-${type}`);
+        activeBtn.className =
+          "vehicle-type-btn active flex flex-col items-center p-3 rounded-xl bg-white border-2 border-brand-blue text-brand-blue shadow-sm";
+      }
+
+      // ======================= TOGGLE NUEVO/USADO =======================
+      function toggleCondition(type) {
+        isNewVehicle = type === "new";
+        const btnNew = document.getElementById("btn-new");
+        const btnUsed = document.getElementById("btn-used");
+        if (isNewVehicle) {
+          btnNew.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm bg-white text-brand-dark";
+          btnUsed.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700";
+        } else {
+          btnUsed.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm bg-white text-brand-dark";
+          btnNew.className =
+            "flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700";
+        }
+        updateCalculations();
+      }
+
+      // ======================= SELECCIÓN DE PRODUCTO =======================
+      function selectPlan(planKey) {
+        currentPlan = planKey;
+        const config = plans[planKey];
+        // Reset all tabs
+        document.querySelectorAll(".plan-tab").forEach((tab) => {
+          tab.className =
+            "plan-tab relative bg-slate-50 border-2 border-transparent text-slate-500 hover:bg-white hover:shadow-md py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300";
+          tab.style.borderColor = "transparent";
+          tab.style.color = "";
+        });
+        // Activate selected tab
+        const activeTab = document.getElementById(`tab-${planKey}`);
+        activeTab.className =
+          "plan-tab active relative bg-white border-2 shadow-lg py-3 md:py-4 px-2 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:-translate-y-0.5";
+        activeTab.style.borderColor = config.color;
+        activeTab.style.color = config.color;
+        // Update UI colors
+        const step3Badge = document.getElementById("step-3-badge");
+        if (step3Badge) step3Badge.style.backgroundColor = config.color;
+        ["term-display", "downpayment-display", "rate-display"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.style.color = config.color;
+          }
+        );
+        ["term-progress", "downpayment-progress", "rate-progress"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.style.backgroundColor = config.color;
+          }
+        );
+        ["term-slider", "downpayment-slider", "rate-slider"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.style.color = config.color;
+        });
+        // Update plan info
+        const planInfo = document.getElementById("plan-info");
+        if (planInfo)
+          planInfo.className = `mt-8 md:mt-10 rounded-2xl p-4 md:p-5 flex items-start gap-4 ${config.bgClass} border ${config.borderClass}`;
+        const planIcon = document.getElementById("plan-icon");
+        if (planIcon) planIcon.className = config.icon;
+        const iconContainer = document.getElementById("plan-icon-container");
+        if (iconContainer) iconContainer.style.color = config.color;
+        const titleSmall = document.getElementById("plan-title-small");
+        if (titleSmall) titleSmall.innerText = config.title;
+        const descEl = document.getElementById("plan-desc");
+        if (descEl) descEl.innerText = config.desc;
+        const previewTitle = document.getElementById("preview-title");
+        if (previewTitle) previewTitle.innerText = config.title;
+        const ctaBtn = document.getElementById("cta-button");
+        if (ctaBtn) {
+          ctaBtn.style.backgroundColor = config.color;
+          ctaBtn.style.boxShadow = `0 10px 15px -3px ${config.color}40`;
+        }
+        const monthlyPaymentEl = document.getElementById("monthly-payment");
+        if (monthlyPaymentEl) monthlyPaymentEl.style.color = config.color;
+        // Set default rate for the product
+        const rateSlider = document.getElementById("rate-slider");
+        if (rateSlider && config.defaultRate !== undefined) {
+          // Check if admin is logged in (mock check) - only admin can see special rates usually, but for now we apply default
+          // If we had a "preferential rate" feature, we would check user role here
+          rateSlider.value = config.defaultRate;
+        }
+
+        // Show/Hide Scheduled Payments section
+        const scheduledPaymentsSection = document.getElementById(
+          "scheduled-payments-section"
+        );
+        if (scheduledPaymentsSection) {
+          if (planKey === "pagos_programados") {
+            scheduledPaymentsSection.classList.remove("hidden");
+          } else {
+            scheduledPaymentsSection.classList.add("hidden");
+            // Clear scheduled payments if switching away? Maybe keep them but ignore
+          }
+        }
+
+        // Update functionality based on leasing vs credit
+        if (methodSelector) {
+          if (config.isLeasing) {
+            methodSelector.value = "leasing";
+            methodSelector.disabled = true;
+          } else {
+            methodSelector.disabled = false;
+            // Restore selection or default to french if was disabled
+            if (methodSelector.value === "leasing")
+              methodSelector.value = "french";
+          }
+        }
+
+        // Render Benefits in UI
+        const benefitsContainer = document.getElementById("benefits-container");
+        if (benefitsContainer && config.benefits) {
+          let benefitsHTML = `<div class="text-[10px] font-bold text-slate-500 uppercase mb-1">Beneficios del Plan</div>`;
+          config.benefits.forEach((benefit) => {
+            benefitsHTML += `
+                 <div class="flex items-start gap-2">
+                    <i class="fas fa-check-circle text-[10px] mt-0.5" style="color: ${config.color}"></i>
+                    <span class="text-[10px] text-slate-600 leading-tight">${benefit}</span>
+                 </div>`;
+          });
+          benefitsContainer.innerHTML = benefitsHTML;
+          benefitsContainer.style.borderColor = `${config.color}30`;
+          benefitsContainer.style.backgroundColor = `${config.color}05`;
+        }
+
+        updateCalculations();
+      }
+
+      // ======================= CÁLCULO CAT (Costo Anual Total) =======================
+      function calculateCAT(rate, comisionPct, term) {
+        // CAT simplificado: tasa efectiva anual + comisiones anualizadas
+        const monthlyRate = rate / 100 / 12;
+        const effectiveAnnualRate = Math.pow(1 + monthlyRate, 12) - 1;
+        const annualizedCommission = (comisionPct / 100) * (12 / term);
+        return ((effectiveAnnualRate + annualizedCommission) * 100).toFixed(2);
+      }
+
+      // ======================= TABLA DE AMORTIZACIÓN (MÉTODO FRANCÉS / ALEMÁN) =======================
+      function generateAmortizationTable(
+        principal,
+        annualRate,
+        months,
+        method
+      ) {
+        const table = [];
+        const monthlyRate = annualRate / 100 / 12;
+
+        if (annualRate === 0) {
+          // Sin intereses (MSI)
+          const monthlyPayment = principal / months;
+          let balance = principal;
+          for (let i = 1; i <= months; i++) {
+            balance -= monthlyPayment;
+            table.push({
+              month: i,
+              payment: monthlyPayment,
+              principal: monthlyPayment,
+              interest: 0,
+              balance: Math.max(0, balance),
+            });
+          }
+        } else if (method === "german") {
+          // Método Alemán: Amortización de capital constante
+          const fixedPrincipal = principal / months;
+          let balance = principal;
+          for (let i = 1; i <= months; i++) {
+            const interest = balance * monthlyRate;
+            const payment = fixedPrincipal + interest;
+            balance -= fixedPrincipal;
+            table.push({
+              month: i,
+              payment,
+              principal: fixedPrincipal,
+              interest,
+              balance: Math.max(0, balance),
+            });
+          }
+        } else {
+          // Método Francés (Default): Cuota fija
+          const payment =
+            (principal * (monthlyRate * Math.pow(1 + monthlyRate, months))) /
+            (Math.pow(1 + monthlyRate, months) - 1);
+          let balance = principal;
+          for (let i = 1; i <= months; i++) {
+            const interest = balance * monthlyRate;
+            const principalPart = payment - interest;
+            balance -= principalPart;
+            table.push({
+              month: i,
+              payment,
+              principal: principalPart,
+              interest,
+              balance: Math.max(0, balance),
+            });
+          }
+        }
+        return table;
+      }
+
+      // ======================= ACTUALIZAR CÁLCULOS =======================
+      function updateCalculations() {
+        const config = plans[currentPlan];
+
+        const vehiclePrice = parsePrice(
+          document.getElementById("vehicle-price").value
+        );
+        const accessoriesPrice = parsePrice(
+          document.getElementById("accessories-price")?.value || "0"
+        );
+        const totalPrice = vehiclePrice + accessoriesPrice;
+        const term = parseInt(document.getElementById("term-slider").value);
+        const downPercent = parseInt(
+          document.getElementById("downpayment-slider").value
+        );
+        const rate = parseFloat(document.getElementById("rate-slider").value);
+        const method = document.getElementById("method-selector")
+          ? document.getElementById("method-selector").value
+          : "french";
+
+        // Update displays
+        document.getElementById("term-display").innerText = term;
+        document.getElementById(
+          "downpayment-display"
+        ).innerText = `${downPercent}%`;
+        document.getElementById("rate-display").innerText = rate.toFixed(1);
+
+        // Update progress bars
+        const termProgress = ((term - 6) / (120 - 6)) * 100;
+        document.getElementById(
+          "term-progress"
+        ).style.width = `${termProgress}%`;
+        const downProgress = ((downPercent - 5) / (90 - 5)) * 100;
+        document.getElementById(
+          "downpayment-progress"
+        ).style.width = `${downProgress}%`;
+        const rateProgress = (rate / 35) * 100;
+        document.getElementById(
+          "rate-progress"
+        ).style.width = `${rateProgress}%`;
+
+        // Calculate financing
+        const downPaymentAmount = totalPrice * (downPercent / 100);
+
+        let amountToFinance = totalPrice - downPaymentAmount;
+
+        const totalScheduled = getScheduledPaymentsTotal();
+        const totalScheduledDisplay = document.getElementById(
+          "total-scheduled-display"
+        );
+        if (totalScheduledDisplay)
+          totalScheduledDisplay.innerText = formatMoney(totalScheduled);
+
+        // Deduct scheduled payments (abonos) from financing amount *conceptually* for calculation
+        // This is a simplification where we assume these scheduled payments reduce the principal obligation
+        // effectively acting as deferred down payments for the purpose of monthly payment calculation.
+        amountToFinance -= totalScheduled;
+
+        // Validations
+        if (amountToFinance < 0) amountToFinance = 0;
+
+        const comisionPct = config.isLeasing ? 3 : 1;
+        const comision = totalPrice * (comisionPct / 100);
+        const seguro = totalPrice * 0.0234;
+
+        let lojack = 10805.4;
+        if (currentCurrency === "USD") lojack = lojack / exchangeRates.USD;
+
+        lojack =
+          currentPlan.includes("green") || currentPlan.includes("moto")
+            ? 0
+            : lojack;
+
+        // Generate amortization table
+        amortizationTable = generateAmortizationTable(
+          amountToFinance,
+          rate,
+          term,
+          method
+        );
+
+        let monthlyPayment = 0;
+        if (amortizationTable.length > 0) {
+          monthlyPayment = amortizationTable[0].payment;
+        }
+
+        // Calculate CAT
+        const cat = calculateCAT(rate, comisionPct, term);
+
+        // Calculate total initial investment
+        let totalInitial = downPaymentAmount + comision + seguro + lojack;
+        if (config.isLeasing) {
+          totalInitial += monthlyPayment * 2;
+        }
+
+        // Store calculated data
+        calculatedData = {
+          monthlyPayment,
+          downPaymentAmount,
+          comision,
+          seguro,
+          lojack,
+          totalInitial,
+          amountToFinance,
+          cat,
+          rate,
+          term,
+          totalScheduled,
+          method,
+        };
+
+        // Update preview
+        // Format Monthly Payment - remove currency symbol for large number
+        const formattedMonthly = formatMoney(monthlyPayment);
+        // Extract number part roughly (removing symbol)
+        // A safer way is to format without symbol
+        const monthlyNoSymbol = new Intl.NumberFormat("es-MX", {
+          minimumFractionDigits: 2,
+        }).format(monthlyPayment);
+
+        const parts = monthlyNoSymbol.split(".");
+
+        document.getElementById("monthly-payment").innerText = parts[0];
+        document.getElementById("monthly-cents").innerText =
+          "." + (parts[1] || "00");
+        document.getElementById("initial-rent").innerText = formatMoney(
+          config.isLeasing ? monthlyPayment : downPaymentAmount
+        );
+        document.getElementById("comision-display").innerText =
+          formatMoney(comision);
+        document.getElementById("seguro-display").innerText =
+          formatMoney(seguro);
+        document.getElementById("lojack-display").innerText =
+          formatMoney(lojack);
+        document.getElementById("total-initial").innerText =
+          formatMoney(totalInitial);
+
+        // Update CAT display if exists
+        const catDisplay = document.getElementById("cat-display");
+        if (catDisplay) catDisplay.innerText = `${cat}%`;
+        const rateDisplayPreview = document.getElementById(
+          "rate-display-preview"
+        );
+        if (rateDisplayPreview) rateDisplayPreview.innerText = `${rate}%`;
+      }
+
+      // ======================= MENÚ MÓVIL =======================
+      document
+        .getElementById("mobile-menu-btn")
+        .addEventListener("click", () => {
+          document.getElementById("mobile-menu").classList.add("open");
+          document.getElementById("menu-overlay").classList.remove("hidden");
+        });
+      document
+        .getElementById("close-menu-btn")
+        .addEventListener("click", closeMobileMenu);
+      document
+        .getElementById("menu-overlay")
+        .addEventListener("click", closeMobileMenu);
+      function closeMobileMenu() {
+        document.getElementById("mobile-menu").classList.remove("open");
+        document.getElementById("menu-overlay").classList.add("hidden");
+      }
+
+      // ======================= MODAL PDF =======================
+      function openPDFModal() {
+        generatePDFContent();
+        document.getElementById("pdf-modal").classList.remove("hidden");
+        document.getElementById("pdf-modal").classList.add("flex");
+      }
+      function closePDFModal() {
+        document.getElementById("pdf-modal").classList.add("hidden");
+        document.getElementById("pdf-modal").classList.remove("flex");
+      }
+
+      // ======================= GENERAR CONTENIDO PDF =======================
+      function generatePDFContent() {
+        const config = plans[currentPlan];
+        const clientName =
+          document.getElementById("client-name").value || "Cliente";
+        const email = document.getElementById("client-email").value || "";
+        const phone = document.getElementById("client-phone").value || "";
+        const date = new Date().toLocaleDateString("es-MX", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+        // Benefits based on plan
+        let benefitsHTML = "";
+        const benefits = [
+          {
+            icon: "fas fa-check-circle",
+            text: "Trámite 100% digital y seguro",
+          },
+          {
+            icon: "fas fa-clock",
+            text: "Respuesta en menos de 24 horas",
+          },
+          {
+            icon: "fas fa-money-bill-wave",
+            text: "Sin penalización por pagos anticipados",
+          },
+        ];
+
+        if (currentPlan.includes("green")) {
+          benefits.push({
+            icon: "fas fa-leaf",
+            text: "Bono verde aplicado a tasa",
+          });
+        }
+        if (currentPlan.includes("pink")) {
+          benefits.push({
+            icon: "fas fa-heart",
+            text: "Seguro de vida cobertura cáncer mujer",
+          });
+        }
+
+        // Add PDF-specific styles for benefits
+        benefits.forEach((b) => {
+          benefitsHTML += `
+            <div class="benefit-item" style="display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:10px;color:#555;">
+                <div class="benefit-icon" style="color:${config.color};width:15px;"><i class="${b.icon}"></i></div>
+                <div>${b.text}</div>
+            </div>`;
+        });
+
+        // Amortization Table Rows
+        let tableRowsHTML = "";
+        amortizationTable.slice(0, 12).forEach((row) => {
+          tableRowsHTML += `
+            <tr>
+                <td style="text-align: center">${row.month}</td>
+                <td style="text-align: right">${formatMoney(row.payment)}</td>
+                <td style="text-align: right">${formatMoney(row.interest)}</td>
+                <td style="text-align: right">${formatMoney(row.principal)}</td>
+                <td style="text-align: right">${formatMoney(row.balance)}</td>
+            </tr>`;
+        });
+
+        if (amortizationTable.length > 12) {
+          tableRowsHTML += `<tr><td colspan="5" style="text-align: center; color: #888; font-style: italic; padding: 10px;">... Se muestran solo los primeros 12 meses ...</td></tr>`;
+        }
+
+        // Scheduled Payments for PDF
+        let scheduledPaymentsHTML = "";
+        if (calculatedData.totalScheduled > 0) {
+          let rows = "";
+          document.querySelectorAll(".scheduled-row").forEach((row) => {
+            const dateVal = row.querySelector(".sp-date").value;
+            const amountVal = parsePrice(row.querySelector(".sp-amount").value);
+            if (amountVal > 0) {
+              rows += `
+                        <tr>
+                            <td>${dateVal || "Sin fecha"}</td>
+                            <td style="text-align: right">${formatMoney(
+                              amountVal
+                            )}</td>
+                        </tr>
+                     `;
+            }
+          });
+
+          scheduledPaymentsHTML = `
+            <div style="margin-top: 15px; page-break-inside: avoid;">
+                <div class="section-title" style="padding: 5px; margin-bottom: 5px; border-radius: 4px; background:#f0f0f0; font-weight:bold; font-size:11px;">
+                    Pagos Programados (Abonos a Capital)
+                </div>
+                <table class="pdf-table">
+                    <thead>
+                        <tr class="header-row">
+                            <th style="text-align: left">Fecha</th>
+                            <th style="text-align: right">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                        <tr class="total-row">
+                            <td>Total Programado</td>
+                            <td style="text-align: right">${formatMoney(
+                              calculatedData.totalScheduled
+                            )}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            `;
+        }
+
+        const methodLabel = document.getElementById("method-selector")
+          ? document.getElementById("method-selector").options[
+              document.getElementById("method-selector").selectedIndex
+            ].text
+          : "Tradicional";
+
+        const pdfHTML = `
+            <div style="padding: 30px; font-family: 'Poppins', sans-serif; color: #333; max-width: 800px; margin: 0 auto; background: white;">
+                <!-- PDF HEADER -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid ${
+                  config.color
+                }; padding-bottom: 15px;">
+                    <img src="https://carmarketing.mx/wp-content/uploads/2023/10/carmarketing-blanco.jpeg" style="height: 50px; filter: invert(0);">
+                    <div style="text-align: right;">
+                        <h2 style="color: ${
+                          config.color
+                        }; margin: 0; font-size: 22px; font-weight: 700;">COTIZACIÓN</h2>
+                        <div style="font-size: 12px; color: #666; margin-top: 4px;">${date}</div>
+                        <div style="font-size: 12px; font-weight: bold; color: ${
+                          config.color
+                        }; margin-top: 4px;">Moneda: ${currentCurrency} | Método: ${methodLabel}</div>
+                    </div>
+                </div>
+
+                <!-- CLIENT INFO -->
+                <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+                    <div style="flex: 1; background: #f8f9fa; padding: 12px; border-radius: 8px; border-left: 4px solid ${
+                      config.color
+                    }">
+                        <div style="font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 4px;">Cliente</div>
+                        <div style="font-weight: 700; font-size: 14px; color: #222;">${clientName}</div>
+                        <div style="font-size: 11px; margin-top: 2px;">${email}</div>
+                        <div style="font-size: 11px;">${phone}</div>
+                    </div>
+                    <div style="flex: 1; background: #f8f9fa; padding: 12px; border-radius: 8px; border-left: 4px solid ${
+                      config.color
+                    }">
+                        <div style="font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 4px;">Vehículo</div>
+                        <div style="font-weight: 700; font-size: 14px; color: #222;">${
+                          isNewVehicle ? "Nuevo" : "Seminuevo"
+                        }</div>
+                        <div style="font-size: 11px; margin-top: 2px;">Valor: ${formatMoney(
+                          parsePrice(
+                            document.getElementById("vehicle-price").value
+                          ) +
+                            parsePrice(
+                              document.getElementById("accessories-price")
+                                ?.value || "0"
+                            )
+                        )}</div>
+                         <div style="font-size: 11px; margin-top: 2px;">Plan: ${
+                           config.title
+                         }</div>
+                    </div>
+                </div>
+                
+                <!-- SUMMARY GRID -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px;">
+                     <div style="background: ${
+                       config.color
+                     }15; padding: 12px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 10px; font-weight: 600; color: ${
+                          config.color
+                        }; text-transform: uppercase;">Mensualidad</div>
+                        <div style="font-size: 18px; font-weight: 800; color: ${
+                          config.color
+                        }; margin-top: 4px;">${formatMoney(
+          calculatedData.monthlyPayment
+        )}</div>
+                    </div>
+                    <div style="background: white; border: 1px solid #eee; padding: 12px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 10px; font-weight: 600; color: #888; text-transform: uppercase;">Pago Inicial</div>
+                         <div style="font-size: 16px; font-weight: 700; color: #333; margin-top: 4px;">${formatMoney(
+                           calculatedData.totalInitial
+                         )}</div>
+                    </div>
+                     <div style="background: white; border: 1px solid #eee; padding: 12px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 10px; font-weight: 600; color: #888; text-transform: uppercase;">Plazo / Tasa</div>
+                         <div style="font-size: 16px; font-weight: 700; color: #333; margin-top: 4px;">${
+                           calculatedData.term
+                         } m / ${calculatedData.rate}%</div>
+                    </div>
+                </div>
+
+                <!-- DETAILS TABLE -->
+                <div style="margin-bottom: 25px;">
+                    <div class="section-title" style="padding: 5px; margin-bottom: 5px; border-radius: 4px; background:#f0f0f0; font-weight:bold; font-size:11px;">Desglose Inicial</div>
+                    <table class="pdf-table">
+                        <tbody>
+                            <tr>
+                                <td>Enganche (${
+                                  document.getElementById("downpayment-slider")
+                                    .value
+                                }%)</td>
+                                <td class="highlight">${formatMoney(
+                                  calculatedData.downPaymentAmount
+                                )}</td>
+                            </tr>
+                            <tr>
+                                <td>Comisión por apertura</td>
+                                <td>${formatMoney(calculatedData.comision)}</td>
+                            </tr>
+                             <tr>
+                                <td>Seguro (Contado estimado)</td>
+                                <td>${formatMoney(calculatedData.seguro)}</td>
+                            </tr>
+                            ${
+                              calculatedData.lojack > 0
+                                ? `<tr><td>LoJack</td><td>${formatMoney(
+                                    calculatedData.lojack
+                                  )}</td></tr>`
+                                : ""
+                            }
+                             <tr class="total-row">
+                                <td>Total Pago Inicial</td>
+                                <td>${formatMoney(
+                                  calculatedData.totalInitial
+                                )}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                ${scheduledPaymentsHTML}
+
+                <!-- AMORTIZATION -->
+                 <div style="margin-bottom: 25px; page-break-inside: avoid;">
+                    <div class="section-title" style="padding: 5px; margin-bottom: 5px; border-radius: 4px; background:#f0f0f0; font-weight:bold; font-size:11px;">Tabla de Amortización (Primeros 12 meses)</div>
+                     <table class="pdf-table">
+                        <thead>
+                            <tr class="header-row">
+                                <th style="text-align: center">Mes</th>
+                                <th style="text-align: right">Mensualidad</th>
+                                <th style="text-align: right">Interés</th>
+                                <th style="text-align: right">Capital</th>
+                                <th style="text-align: right">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           ${tableRowsHTML}
+                        </tbody>
+                    </table>
+                 </div>
+
+                 <!-- BENEFITS -->
+                 <div style="margin-bottom: 20px; page-break-inside: avoid; background: #fcfcfc; padding: 15px; border-radius: 8px; border: 1px dashed #ddd;">
+                    <div style="font-weight: 700; font-size: 12px; text-transform: uppercase; color: #444; margin-bottom: 10px;">Beneficios incluidos en tu plan</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        ${benefitsHTML}
+                    </div>
+                 </div>
+
+                 <div style="font-size: 9px; color: #999; text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
+                    Esta cotización es de carácter informativo y puede variar. Sujeta a aprobación de crédito. <br>
+                    Vigencia de 15 días. CAT Promedio ${
+                      calculatedData.cat
+                    }% sin IVA.
+                 </div>
+            </div>
+            `;
+        document.getElementById("pdf-content").innerHTML = pdfHTML;
+      }
+
+      // ======================= DESCARGAR PDF =======================
+      function downloadPDF() {
+        const element = document.getElementById("pdf-content");
+        const config = plans[currentPlan];
+        const brand = document.getElementById("brand-select").value;
+        const clientName =
+          document.getElementById("client-name")?.value || "Cliente";
+
+        const opt = {
+          margin: [5, 5, 5, 5],
+          filename: `Cotizacion_${config.title.replace(
+            /\s/g,
+            "_"
+          )}_${clientName.replace(/\s/g, "_")}_${brand}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+          },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        };
+        html2pdf().set(opt).from(element).save();
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closePDFModal();
+      });
+
+      // ======================= INICIALIZACIÓN =======================
+
+      // Admin & CRM Logic
+      const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+
+      if (currentUser && currentUser.role === "admin") {
+        const adminContainer = document.getElementById("admin-rate-container");
+        if (adminContainer) adminContainer.classList.remove("hidden");
+      }
+
+      function applyAdminRate() {
+        const rateInput = document.getElementById("admin-rate-input");
+        const val = parseFloat(rateInput.value);
+        if (!isNaN(val) && val >= 0) {
+          const slider = document.getElementById("rate-slider");
+          slider.value = val;
+          // Update max if needed
+          if (val > parseFloat(slider.max)) slider.max = val;
+
+          updateCalculations();
+          // Update display
+          document.getElementById("rate-display").innerText = val.toFixed(1);
+        }
+      }
+
+      function saveQuote() {
+        // Gather data
+        const quoteId = document.getElementById("quote-id").innerText;
+        const quoteData = {
+          id: quoteId,
+          date: new Date().toISOString(),
+          client: {
+            name: document.getElementById("client-name").value,
+            email: document.getElementById("client-email").value,
+            phone: document.getElementById("client-phone").value,
+          },
+          vehicle: {
+            price: document.getElementById("vehicle-price").value,
+            model: document.getElementById("model-input").value,
+            year: document.getElementById("year-input").value,
+            brand: document.getElementById("brand-select").value,
+            type: vehicleType,
+          },
+          plan: {
+            id: currentPlan,
+            name: plans[currentPlan].title,
+            term: calculatedData.term,
+            rate: calculatedData.rate,
+            downPayment: calculatedData.downPaymentAmount,
+            monthlyPayment: calculatedData.monthlyPayment,
+            currency: currentCurrency,
+            method: calculatedData.method,
+          },
+          financials: calculatedData,
+          user: currentUser ? currentUser.id : "guest",
+          status: "draft",
+        };
+
+        // Save to LocalStorage (mock CRM)
+        const savedQuotes = JSON.parse(
+          localStorage.getItem("crm_quotes") || "[]"
+        );
+        savedQuotes.push(quoteData);
+        localStorage.setItem("crm_quotes", JSON.stringify(savedQuotes));
+
+        // Show success feedback
+        const btn = document.querySelector('button[onclick="saveQuote()"]');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Guardado';
+        btn.classList.remove("bg-slate-800");
+        btn.classList.add("bg-green-600");
+
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.add("bg-slate-800");
+          btn.classList.remove("bg-green-600");
+        }, 2000);
+      }
+
+      updateCalculations();
+      // Initialize benefits for default plan
+      selectPlan(currentPlan);
+    </script>
+  </body>
+</html>

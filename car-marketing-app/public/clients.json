@@ -1,0 +1,138 @@
+[
+  {
+    "id": "CM-2026-A1",
+    "date": "2026-02-14T10:30:00.000Z",
+    "client": {
+      "name": "Juan Pérez (Store 1 - Vendor 1)",
+      "email": "juan@example.com",
+      "phone": "5511111111"
+    },
+    "vehicle": {
+      "type": "auto",
+      "condition": "new",
+      "price": "430000",
+      "model": "Mazda 3",
+      "year": "2025",
+      "brand": "Mazda"
+    },
+    "plan": {
+      "id": "credito_normal",
+      "name": "Crédito Normal",
+      "term": 48,
+      "rate": 15.9,
+      "currency": "MXN",
+      "method": "french"
+    },
+    "financials": { "totalInitial": 86000, "monthlyPayment": 10500 },
+    "user": "user_vendor",
+    "status": "negotiation"
+  },
+  {
+    "id": "CM-2026-A2",
+    "date": "2026-02-13T16:00:00.000Z",
+    "client": {
+      "name": "Maria Garcia (Store 1 - Vendor 1)",
+      "email": "maria@example.com",
+      "phone": "5522222222"
+    },
+    "vehicle": {
+      "type": "auto",
+      "condition": "new",
+      "price": "350000",
+      "model": "Kia Rio",
+      "year": "2025",
+      "brand": "Kia"
+    },
+    "plan": {
+      "id": "blue_leasing",
+      "name": "Blue Leasing",
+      "term": 36,
+      "currency": "MXN",
+      "method": "leasing"
+    },
+    "financials": { "totalInitial": 45000, "monthlyPayment": 6200 },
+    "user": "user_vendor",
+    "status": "approved"
+  },
+  {
+    "id": "CM-2026-B1",
+    "date": "2026-02-14T09:00:00.000Z",
+    "client": {
+      "name": "Carlos Lopez (Store 1 - Vendor 2)",
+      "email": "carlos@example.com",
+      "phone": "5533333333"
+    },
+    "vehicle": {
+      "type": "auto",
+      "condition": "new",
+      "price": "550000",
+      "model": "Honda CR-V",
+      "year": "2025",
+      "brand": "Honda"
+    },
+    "plan": {
+      "id": "credito_normal",
+      "name": "Crédito Normal",
+      "term": 60,
+      "rate": 15.9,
+      "currency": "MXN"
+    },
+    "financials": { "totalInitial": 110000, "monthlyPayment": 12500 },
+    "user": "user_vendor_2",
+    "status": "draft"
+  },
+  {
+    "id": "CM-2026-C1",
+    "date": "2026-02-12T11:00:00.000Z",
+    "client": {
+      "name": "Ana Torres (Store 2 - Vendor 3)",
+      "email": "ana@example.com",
+      "phone": "5544444444"
+    },
+    "vehicle": {
+      "type": "auto",
+      "condition": "new",
+      "price": "280000",
+      "model": "Nissan Versa",
+      "year": "2025",
+      "brand": "Nissan"
+    },
+    "plan": {
+      "id": "credito_normal",
+      "name": "Crédito Normal",
+      "term": 48,
+      "rate": 15.9,
+      "currency": "MXN"
+    },
+    "financials": { "totalInitial": 56000, "monthlyPayment": 7800 },
+    "user": "user_vendor_3",
+    "status": "approved"
+  },
+  {
+    "id": "CM-2026-M1",
+    "date": "2026-02-15T08:30:00.000Z",
+    "client": {
+      "name": "Luis Miguel (Store 1 - Manager)",
+      "email": "luis@example.com",
+      "phone": "5555555555"
+    },
+    "vehicle": {
+      "type": "auto",
+      "condition": "new",
+      "price": "1200000",
+      "model": "BMW X5",
+      "year": "2025",
+      "brand": "BMW"
+    },
+    "plan": {
+      "id": "green_leasing",
+      "name": "Green Leasing",
+      "term": 24,
+      "currency": "MXN",
+      "method": "leasing"
+    },
+    "financials": { "totalInitial": 300000, "monthlyPayment": 25000 },
+    "user": "user_manager",
+    "status": "negotiation"
+  }
+]

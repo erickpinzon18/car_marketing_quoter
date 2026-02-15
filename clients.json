@@ -1,0 +1,236 @@
+[
+  {
+    "id": "CM-2026-A1",
+    "date": "2026-02-10T14:30:00.000Z",
+    "client": {
+      "name": "Juan Pérez",
+      "email": "juan.perez@gmail.com",
+      "phone": "5512345678"
+    },
+    "vehicle": {
+      "price": "430000",
+      "model": "Mazda 3",
+      "year": "2025",
+      "brand": "Mazda",
+      "type": "new"
+    },
+    "plan": {
+      "id": "traditional",
+      "name": "Crédito Tradicional",
+      "term": 60,
+      "rate": 15.9,
+      "currency": "MXN"
+    },
+    "financials": {
+      "totalInitial": 65000,
+      "monthlyPayment": 8500.5
+    },
+    "user": "user_vendor",
+    "status": "draft"
+  },
+  {
+    "id": "CM-2026-B2",
+    "date": "2026-02-09T10:15:00.000Z",
+    "client": {
+      "name": "María González",
+      "email": "maria.g@outlook.com",
+      "phone": "5598765432"
+    },
+    "vehicle": {
+      "price": "620900",
+      "model": "Kia Sportage",
+      "year": "2025",
+      "brand": "Kia",
+      "type": "new"
+    },
+    "plan": {
+      "id": "pink_credit",
+      "name": "Auto Pink",
+      "term": 48,
+      "rate": 14.5,
+      "currency": "MXN"
+    },
+    "financials": {
+      "totalInitial": 85000,
+      "monthlyPayment": 12400.0
+    },
+    "user": "user_vendor",
+    "status": "draft"
+  },
+  {
+    "id": "CM-2026-C3",
+    "date": "2026-02-08T16:45:00.000Z",
+    "client": {
+      "name": "Carlos Rodríguez",
+      "email": "crodriguez@empresa.com",
+      "phone": "5555555555"
+    },
+    "vehicle": {
+      "price": "850000",
+      "model": "Toyota RAV4 Hybrid",
+      "year": "2024",
+      "brand": "Toyota",
+      "type": "semi"
+    },
+    "plan": {
+      "id": "green_credit",
+      "name": "Eco Credit",
+      "term": 36,
+      "rate": 12.9,
+      "currency": "MXN"
+    },
+    "financials": {
+      "totalInitial": 120000,
+      "monthlyPayment": 18500.75
+    },
+    "user": "user_manager",
+    "status": "negotiation"
+  },
+  {
+    "id": "CM-2026-D4",
+    "date": "2026-02-11T09:00:00.000Z",
+    "client": {
+      "name": "Ana López",
+      "email": "ana.lopez@yahoo.com",
+      "phone": "5544332211"
+    },
+    "vehicle": {
+      "price": "250000",
+      "model": "Honda CB500X",
+      "year": "2025",
+      "brand": "Honda",
+      "type": "moto"
+    },
+    "plan": {
+      "id": "moto_finance",
+      "name": "Moto Power",
+      "term": 24,
+      "rate": 18.0,
+      "currency": "MXN"
+    },
+    "financials": {
+      "totalInitial": 35000,
+      "monthlyPayment": 5200.0
+    },
+    "user": "user_vendor",
+    "status": "approved"
+  },
+  {
+    "id": "CM-2026-E5",
+    "date": "2026-02-12T11:20:00.000Z",
+    "client": {
+      "name": "Roberto Sánchez",
+      "email": "robert.s@tech.io",
+      "phone": "5566778899"
+    },
+    "vehicle": {
+      "price": "1200000",
+      "model": "Ford Mustang",
+      "year": "2024",
+      "brand": "Ford",
+      "type": "new"
+    },
+    "plan": {
+      "id": "flex_leasing",
+      "name": "Leasing Flex",
+      "term": 36,
+      "rate": 0,
+      "currency": "MXN",
+      "method": "leasing"
+    },
+    "financials": {
+      "totalInitial": 45000,
+      "monthlyPayment": 28000.0
+    },
+    "user": "user_admin",
+    "status": "draft"
+  },
+  {
+    "id": "CM-2026-F6",
+    "date": "2026-02-05T13:00:00.000Z",
+    "client": {
+      "name": "Laura Martínez",
+      "email": "laura.m@gmail.com",
+      "phone": "5511223344"
+    },
+    "vehicle": {
+      "price": "380000",
+      "model": "Nissan Versa",
+      "year": "2023",
+      "brand": "Nissan",
+      "type": "semi"
+    },
+    "plan": {
+      "id": "traditional",
+      "name": "Crédito Tradicional",
+      "term": 48,
+      "rate": 16.5,
+      "currency": "MXN"
+    },
+    "financials": {
+      "totalInitial": 40000,
+      "monthlyPayment": 7800.0
+    },
+    "user": "user_vendor",
+    "status": "lost"
+  },
+  {
+    "id": "CM-2026-G7",
+    "date": "2026-02-01T10:00:00.000Z",
+    "client": {
+      "name": "Pedro Ramírez",
+      "email": "pedro.ramirez@hotmail.com",
+      "phone": "5587654321"
+    },
+    "vehicle": {
+      "price": "550000",
+      "model": "Volkswagen Taos",
+      "year": "2024",
+      "brand": "Volkswagen",
+      "type": "new"
+    },
+    "plan": {
+      "id": "pagos_programados",
+      "name": "Plan A tu Medida",
+      "term": 60,
+      "rate": 15.5,
+      "currency": "MXN"
+    },
+    "financials": {
+      "totalInitial": 60000,
+      "monthlyPayment": 9500.0,
+      "totalScheduled": 50000
+    },
+    "user": "user_manager",
+    "status": "approved"
+  },
+  {
+    "id": "CM-2026-H8",
+    "date": "2026-02-12T09:30:00.000Z",
+    "client": {
+      "name": "Sofia Torres",
+      "email": "sofia.t@gmail.com",
+      "phone": "5500998877"
+    },
+    "vehicle": {
+      "price": "950000",
+      "model": "Tesla Model 3",
+      "year": "2024",
+      "brand": "Tesla",
+      "type": "semi"
+    },
+    "plan": {
+      "id": "green_credit",
+      "name": "Eco Credit",
+      "term": 48,
+      "rate": 11.5,
+      "currency": "MXN"
+    },
+    "financials": {
+      "totalInitial": 150000,
+      "monthlyPayment": 16000.0
+    },
+    "user": "user_admin",
+    "status": "draft"
+  }
+]
