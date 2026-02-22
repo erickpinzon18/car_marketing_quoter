@@ -174,19 +174,7 @@ export default function FinancingControls({
           </div>
         )}
 
-        <div>
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">
-            <i className="fas fa-user mr-1"></i> Género
-          </label>
-          <ToggleGroup
-            options={[
-              { value: 'male', label: 'Masculino', icon: 'fas fa-mars' },
-              { value: 'female', label: 'Femenino', icon: 'fas fa-venus' },
-            ]}
-            value={gender}
-            onChange={onGenderChange}
-          />
-        </div>
+        
       </div>
     </>
   );

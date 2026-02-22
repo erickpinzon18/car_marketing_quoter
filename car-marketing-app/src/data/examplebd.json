@@ -1,0 +1,377 @@
+{
+  "users": [
+    {
+      "id": "FIREBASE_AUTH_ID",
+      "name": "Adminstrador General",
+      "password": "password",
+      "phone": "5555555555",
+      "role": "admin",
+      "email": "[EMAIL_ADDRESS]"
+    },
+    {
+      "id": "FIREBASE_AUTH_ID",
+      "name": "Gerente",
+      "password": "password",
+      "role": "manager",
+      "phone": "5555555555",
+      "email": "[EMAIL_ADDRESS]",
+      "storeID": "store_001"
+    },
+    {
+      "id": "FIREBASE_AUTH_ID",
+      "name": "Vendedor con agencia",
+      "password": "password",
+      "role": "vendor",
+      "email": "[EMAIL_ADDRESS]",
+      "storeID": "store_001",
+      "agency": "agency_001"
+    },
+    {
+      "id": "FIREBASE_AUTH_ID",
+      "name": "Vendedor sin agencia",
+      "password": "password",
+      "role": "vendor",
+      "email": "[EMAIL_ADDRESS]",
+      "storeID": "store_001"
+    }
+  ],
+  "agencies": [
+    {
+      "id": "agency_001",
+      "name": "Volkswagen",
+      "phone": "5555555555",
+      "address": "Av. Principal 123",
+      "city": "CDMX"
+    }
+  ],
+  "stores": [
+    {
+      "id": "store_001",
+      "name": "Sucursal Polanco",
+      "phone": "5555555555",
+      "address": "Av. Principal 123",
+      "city": "CDMX"
+    },
+    {
+      "id": "store_002",
+      "name": "Sucursal Satelite",
+      "phone": "5555555555",
+      "address": "Av. Principal 123",
+      "city": "CDMX"
+    }
+  ],
+  "plans": [
+    {
+      "id": "plan_001",
+      "name": "credito_normal",
+      "pdfTitle": "COTIZACIÓN CRÉDITO NORMAL",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": false,
+      "defaultRate": 15.9,
+      "benefits": [
+        "Movilidad en todo Momento para Vehículos Nuevos y Seminuevos",
+        "Flexibilidad con Historial Crediticio Irregular",
+        "Mensualidades fijas durante todo el plazo",
+        "Liquidación anticipada SIN PENALIZACIÓN",
+        "Somos Multimarca: Autos, Motos, Camiones y Buses"
+      ]
+    },
+    {
+      "id": "plan_002",
+      "name": "credito_pagos_programados",
+      "pdfTitle": "COTIZACIÓN CRÉDITO PAGOS PROGRAMADOS",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": false,
+      "defaultRate": 18.49,
+      "benefits": [
+        "Disminuye tu PAGO MENSUAL desde el inicio",
+        "Pagos anuales programados para mayor flexibilidad",
+        "Movilidad en todo Momento para Vehículos Nuevos y Seminuevos",
+        "Liquidación anticipada SIN PENALIZACIÓN",
+        "Somos Multimarca: Autos, Motos, Camiones y Buses"
+      ]
+    },
+    {
+      "id": "plan_003",
+      "name": "smart_credit",
+      "pdfTitle": "COTIZACIÓN SMART CREDIT",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": false,
+      "defaultRate": 14.9,
+      "benefits": [
+        "Tasa preferencial competitiva",
+        "Proceso de aprobación rápido y ágil",
+        "Sin comisión por apertura (promoción sujeta a cambios)",
+        "Ideal para clientes con buen historial crediticio",
+        "Somos Multimarca: Autos, Motos, Camiones y Buses"
+      ]
+    },
+    {
+      "id": "plan_004",
+      "name": "pink_credit",
+      "pdfTitle": "COTIZACIÓN PINK CREDIT",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": false,
+      "defaultRate": 15.9,
+      "benefits": [
+        "Exclusivo para Mujeres de 22 a 78 años",
+        "Movilidad en todo Momento para Vehículos Nuevos y Seminuevos",
+        "Flexibilidad Sin Historial Crediticio o Historial Irregular",
+        "Liquidación Total o Aportaciones a Capital SIN PENALIZACIÓN",
+        "Somos Multimarca Motos y Autos"
+      ]
+    },
+    {
+      "id": "plan_005",
+      "name": "green_credit",
+      "pdfTitle": "COTIZACIÓN GREEN CREDIT",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": false,
+      "defaultRate": 12.9,
+      "benefits": [
+        "Tasa preferencial para híbridos y eléctricos",
+        "Exentos de verificación hasta por 8 años",
+        "Sin pago de ISAN y Tenencia",
+        "Movilidad en todo Momento para Vehículos Nuevos y Seminuevos",
+        "Somos Multimarca Motos, Autos, Camiones y Buses"
+      ]
+    },
+    {
+      "id": "plan_006",
+      "name": "arrendamiento",
+      "pdfTitle": "COTIZACIÓN ARRENDAMIENTO PURO",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": true,
+      "defaultRate": 0,
+      "benefits": [
+        "Movilidad en todo Momento para Vehículos Nuevos y Seminuevos",
+        "Flexibilidad con Historial Crediticio Irregular",
+        "Rentas 100% Deducibles de Impuestos para Vehículos de Carga",
+        "Vehículos de Pasajeros Gasolina/Diesel $200 pesos diarios (Art. 28 LISR)",
+        "Somos Multimarca Motos, Autos, Camiones y Buses"
+      ]
+    },
+    {
+      "id": "plan_007",
+      "name": "green_leasing",
+      "pdfTitle": "COTIZACIÓN GREEN LEASING",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": true,
+      "defaultRate": 0,
+      "benefits": [
+        "Movilidad en todo Momento para Vehículos Nuevos y Seminuevos",
+        "Flexibilidad con Historial Crediticio Irregular",
+        "Vehículos Híbridos o Eléctricos $285 pesos diarios deducibles (Art. 28 LISR)",
+        "Híbridos o Eléctricos Exentos de Verificación por 8 Años",
+        "Vehículos Híbridos o Eléctricos Exentos de ISAN y Tenencia",
+        "Somos Multimarca Motos, Autos, Camiones y Buses"
+      ]
+    },
+    {
+      "id": "plan_008",
+      "name": "moto_credit",
+      "pdfTitle": "COTIZACIÓN MOTO-BIKE CREDIT",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": false,
+      "defaultRate": 16.9,
+      "benefits": [
+        "Especializado en motos y bicis eléctricas",
+        "Plazos flexibles de 12 a 60 meses",
+        "Movilidad en todo Momento para Vehículos Nuevos y Seminuevos",
+        "Proceso de aprobación ágil y sencillo",
+        "Somos Multimarca"
+      ]
+    },
+    {
+      "id": "plan_009",
+      "name": "leasing_moto",
+      "pdfTitle": "COTIZACIÓN LEASING MOTO-BIKE",
+      "desc": "Financiamiento tradicional con tasa fija. Ideal para adquirir tu vehículo con mensualidades fijas.",
+      "isLeasing": true,
+      "defaultRate": 0,
+      "benefits": [
+        "Rentas deducibles para motos (Actividad Empresarial/Profesional)",
+        "Ideal para flotillas de mensajería y reparto",
+        "Renovación constante del vehículo",
+        "Opción de compra al final del plazo",
+        "Somos Multimarca"
+      ]
+    }
+  ],
+  "settings": {
+    "rates": {
+      "credito_normal": {
+        "rate": 12.9,
+        "comisionApertura": 0.02
+      },
+      "pagos_programados": {
+        "rate": 18.49,
+        "comisionApertura": 0.02
+      },
+      "smart_credit": {
+        "rate": 14.9,
+        "comisionApertura": 0.02
+      },
+      "pink_credit": {
+        "rate": 15.9,
+        "comisionApertura": 0.02
+      },
+      "green_credit": {
+        "rate": 12.9,
+        "comisionApertura": 0.02
+      },
+      "moto_credit": {
+        "rate": 16.9,
+        "comisionApertura": 0.02
+      },
+      "arrendamiento": {
+        "rate": 0,
+        "comisionApertura": 0
+      },
+      "green_leasing": {
+        "rate": 0,
+        "comisionApertura": 0
+      },
+      "leasing_moto": {
+        "rate": 0,
+        "comisionApertura": 0
+      }
+    },
+    "exchangeRates": {
+      "USD": 19.5,
+      "COP": 0.0045,
+      "CLP": 0.021,
+      "PEN": 5.2,
+      "ARS": 0.016,
+      "BRL": 3.4,
+      "UYU": 0.47,
+      "BOB": 2.82,
+      "GTQ": 2.52,
+      "DOP": 0.33,
+      "CRC": 0.037,
+      "PAB": 19.5
+    },
+    "currencies": [
+      { "code": "MXN", "flag": "🇲🇽", "name": "Peso Mexicano" },
+      { "code": "USD", "flag": "🇺🇸", "name": "Dólar USA" },
+      { "code": "COP", "flag": "🇨🇴", "name": "Peso Colombiano" },
+      { "code": "CLP", "flag": "🇨🇱", "name": "Peso Chileno" },
+      { "code": "PEN", "flag": "🇵🇪", "name": "Sol Peruano" },
+      { "code": "ARS", "flag": "🇦🇷", "name": "Peso Argentino" },
+      { "code": "BRL", "flag": "🇧🇷", "name": "Real Brasileño" },
+      { "code": "UYU", "flag": "🇺🇾", "name": "Peso Uruguayo" },
+      { "code": "BOB", "flag": "🇧🇴", "name": "Boliviano" },
+      { "code": "GTQ", "flag": "🇬🇹", "name": "Quetzal" },
+      { "code": "DOP", "flag": "🇩🇴", "name": "Peso Dominicano" },
+      { "code": "CRC", "flag": "🇨🇷", "name": "Colón" },
+      { "code": "PAB", "flag": "🇵🇦", "name": "Balboa" }
+    ]
+  },
+  "promotions": [
+    {
+      "id": "promo_001",
+      "name": "Promoción por el día del padre",
+      "description": "Aprovecha esta promoción especial por el día del padre y llévate tu auto nuevo con un descuento especial.",
+      "tasa": 12.9,
+      "plazos": [12, 24, 36, 48, 60],
+      "enganche": [10, 20, 30, 40, 50],
+      "comisionApertura": 0.02,
+      "planId": ["plan_001", "plan_002"],
+      "agencieId": ["agencia_001", "agencia_002"],
+      "initDate": "2022-01-01T00:00:00.000Z",
+      "endDate": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "promo_002",
+      "name": "Promoción por el día de la madre",
+      "description": "Aprovecha esta promoción especial por el día de la madre y llévate tu auto nuevo con un descuento especial.",
+      "tasa": 12.9,
+      "plazos": [12, 24, 36, 48, 60],
+      "enganche": [10, 20, 30, 40, 50],
+      "comisionApertura": 0.02,
+      "planId": "all",
+      "agencieId": "all",
+      "initDate": "2022-01-01T00:00:00.000Z",
+      "endDate": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "clients": [
+    {
+      "id": "client_001",
+      "name": "Cliente 1",
+      "email": "[EMAIL_ADDRESS]",
+      "phone": "1234567890",
+      "tin": "RFC123456789",
+      "address": "123 Main St",
+      "city": "City",
+      "state": "State",
+      "zip": "12345",
+      "country": "Country",
+      "gender": "Male",
+      "birthDate": "1990-01-01T00:00:00.000Z",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "quoters": [
+    {
+      "id": "quoter_001",
+      "userId": "user_001",
+      "clientId": "client_001",
+      "planId": "plan_001",
+      "agencieId": "agencia_001",
+      "validUntil": "2022-01-01T00:00:00.000Z",
+      "currency": "MXN",
+      "comisionApertura": 0.02,
+      "insurance": 10000,
+      "vehicle": {
+        "type": "Auto",
+        "brand": "Toyota",
+        "model": "Corolla LE",
+        "year": 2022,
+        "price": 250000,
+        "accesoryPrice": 10000,
+        "totalPrice": 260000
+      },
+      "financalData": {
+        "plazo": 48,
+        "enganche": 26000,
+        "tasa": 12.9
+      },
+      "finalPrice": 270000,
+      "amortizationType": "dutch",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "quoter_002",
+      "userId": "user_001",
+      "clientId": "client_001",
+      "planId": "plan_001",
+      "agencieId": "agencia_001",
+      "validUntil": "2022-01-01T00:00:00.000Z",
+      "currency": "MXN",
+      "comisionApertura": 0.02,
+      "insurance": 10000,
+      "vehicle": {
+        "type": "Auto",
+        "brand": "Toyota",
+        "model": "Corolla LX",
+        "year": 2022,
+        "price": 260000,
+        "accesoryPrice": 10000,
+        "totalPrice": 270000
+      },
+      "financalData": {
+        "plazo": 48,
+        "enganche": 27000,
+        "tasa": 12.9,
+        "promoId": "promo_001"
+      },
+      "finalPrice": 290000,
+      "amortizationType": "french",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  ]
+}

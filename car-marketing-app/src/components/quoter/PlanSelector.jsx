@@ -21,7 +21,7 @@ export default function PlanSelector({ currentPlan, onChange }) {
             <button
               key={key}
               onClick={() => onChange(key)}
-              className={`flex-shrink-0 snap-start flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold transition-all whitespace-nowrap border ${
+              className={`shrink-0 snap-start flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold transition-all whitespace-nowrap border ${
                 isActive
                   ? 'text-white shadow-lg scale-[1.02]'
                   : 'bg-white/60 text-slate-500 hover:bg-white border-slate-100 hover:scale-[1.01]'

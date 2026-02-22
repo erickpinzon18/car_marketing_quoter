@@ -32,6 +32,8 @@ export default function QuoterPage() {
   const [clientData, setClientData] = useState(
     editQuote?.client || { name: '', phone: '', email: '', rfc: '' }
   );
+  const [gender, setGender] = useState(editQuote?.config?.gender || 'male');
+
 
   // Vehicle state
   const [vehicleData, setVehicleData] = useState(
@@ -80,7 +82,6 @@ export default function QuoterPage() {
   const [downPercent, setDownPercent] = useState(editQuote?.config?.downPercent ?? 20);
   const [downMode, setDownMode] = useState('percent'); // 'percent' or 'amount'
   const [downAmount, setDownAmount] = useState('');
-  const [gender, setGender] = useState(editQuote?.config?.gender || 'male');
   const [method, setMethod] = useState(editQuote?.plan?.method || 'french');
   const [currency, setCurrency] = useState(editQuote?.plan?.currency || 'MXN');
   const [scheduledPayments, setScheduledPayments] = useState(editQuote?.config?.scheduledPayments || []);
@@ -209,7 +210,8 @@ export default function QuoterPage() {
                 Datos del Cliente
               </h2>
             </div>
-            <ClientFormFields clientData={clientData} onChange={setClientData} />
+            <ClientFormFields clientData={clientData} onChange={setClientData} gender={gender}
+              onGenderChange={setGender} />
           </GlassPanel>
 
           {/* Step 2: Vehicle */}
@@ -236,9 +238,7 @@ export default function QuoterPage() {
               onDownAmountChange={setDownAmount}
               totalPrice={totalPrice}
               rate={rate}
-              onRateChange={setRate}
-              gender={gender}
-              onGenderChange={setGender}
+              onRateChange={setRate}              
             />
           </GlassPanel>
 

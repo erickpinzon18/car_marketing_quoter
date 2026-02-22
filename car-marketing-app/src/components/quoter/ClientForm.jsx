@@ -1,4 +1,5 @@
 import { formatPriceInput } from '../../utils/formatters';
+import  ToggleGroup  from '../ui/ToggleGroup';
 
 export default function ClientForm({ clientData, onChange }) {
   const handleChange = (field, value) => {
@@ -17,7 +18,7 @@ export default function ClientForm({ clientData, onChange }) {
   );
 }
 
-export function ClientFormFields({ clientData, onChange }) {
+export function ClientFormFields({ clientData, onChange, gender, onGenderChange }) {
   const handleChange = (field, value) => {
     onChange({ ...clientData, [field]: value });
   };
@@ -71,6 +72,20 @@ export function ClientFormFields({ clientData, onChange }) {
           placeholder="XAXX010101000"
           className="input-clean w-full rounded-xl py-3 px-4 text-sm font-medium text-brand-dark focus:outline-none"
         />
+      </div>
+
+      <div>
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">
+            <i className="fas fa-user mr-1"></i> Género
+          </label>
+          <ToggleGroup
+            options={[
+              { value: 'male', label: 'Masculino', icon: 'fas fa-mars' },
+              { value: 'female', label: 'Femenino', icon: 'fas fa-venus' },
+            ]}
+            value={gender}
+            onChange={onGenderChange}
+          />
       </div>
     </div>
   );

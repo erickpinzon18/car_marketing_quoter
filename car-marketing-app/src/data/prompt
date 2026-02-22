@@ -1,0 +1,39 @@
+Eres un experto en desarrollo de software con experiencia en React, Firebase y Tailwind CSS. 
+
+Este proyecto es un cotizador multi tiendas, que permite a los usuarios de una empresa de financiación mandar cotizaciones por sucrusales, existen tipos de usuarios, adminstradores, gerentes y vendedores
+
+# administrador
+un adminsitrador puede ver toda la info de todas las tiendas, puede esteblecer configuraciones para cada tienda, como tazas de interes por cada uno de los planes que estan establecidos, tazas de interes para cada tienda, puede crear promociones con restricciones como plazos, enganches, agencias, comision por apertura, etc. y tambien puede configurar tazas de cambio para las distintas monedas que se vayan a utilizar, a su ves puede ver todos los clientes de todas las tiendas, puede ver todas las cotizaciones de todas las tiendas y estadisticas de todas las tiendas, 
+
+# gerente
+un usuario gerente, puede ver la informacion unicamente de su tienda, es decir cotizaciones de su tienda que hayan creado los vendedores de su tienda, puede enviar cotizaciones y esta limitado a las reglas que pongan los adminsitradoes
+
+# vendedor
+un vendedor puede ver unicamente sus cotizaciones pero al momento de generar una cotiazcion puede buscar entre todos los clientes de todas las tiendas por si se tiene que crear diferentes cotizaciones para el mismo cliente, que varios vendedores puedan crear varias cotizaciones de varias tiendas, para el mismo cliente, pero cada tienda solo vera sus cotizaciones y cada vendedor solo vera sus cotizaciones y el administrador vera todas las cotizaciones
+
+
+El diseño y las funciones basicas de cotizacion ya estan establecidas en el proyecto, solo que por el momento se utilizan json o archivos js como bd, el punto de este cambio es implementar Firebase como base de datos, y crear las funciones correspondientes para cada coleccion de la base de datos, hay un archivo llamado @beautifulMention que tiene la estructura de la base de datos, puedes usarlo como referencia para crear las funciones correspondientes, ten en cuenta que las rutas de las colecciones deben ser las siguientes:
+
+/users
+/agencies
+/stores
+/plans
+/settings
+/promotions
+/clients
+/quotes
+
+Debes de dejar un archivo conf para establecer los datos de conexion para firebase que obtendra de un .env con la siguiente estructura:
+
+VITE_FIREBASE_API_KEY
+VITE_FIREBASE_AUTH_DOMAIN
+VITE_FIREBASE_PROJECT_ID
+VITE_FIREBASE_STORAGE_BUCKET
+VITE_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID
+
+Organiza tareas por prioridades, genrea un plan para reestructurar todo el proyecto y se vaya implementando firebase poco a poco, sin romper la funcionalidad actual, igual es importante que implemmentes el firebase auth para el login de los usuarios, para relacionar el auth con los datos del usuario vamos a utilizar el id generado por firebase auth como id de la coleccion users, es decir que el id del documento en la coleccion users debe ser el id generado por firebase auth, de esta manera podremos relacionar el auth con los datos del usuarios
+
+El sistema de promociones aun no esta implementado, solo esta la coleccion en el json de ejemplo, pero no hay funciones para crear, editar, eliminar o listar promociones, asi que puedes crear las funciones correspondientes para crear promociones, ten en cuenta que eso unicamente lo puede adminsitrar el usuario con rol admin y deberá implementarse en el archivo @beautifulMention
+
+Toma el tiempo necesario para analizar el proyecto y generar un plan detallado para la implementacion de firebase, ten en cuenta que es un proyecto en produccion, asi que no debes romper la funcionalidad actual
