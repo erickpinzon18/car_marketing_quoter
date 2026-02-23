@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCalculations } from '../hooks/useCalculations';
 import { useQuotes } from '../hooks/useQuotes';
+import { useSettings } from '../hooks/useSettings';
 import { plans } from '../data/plans';
-import settings from '../data/settings.json';
 import { parsePrice } from '../utils/formatters';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
@@ -19,7 +19,8 @@ import PDFContent from '../components/pdf/PDFContent';
 
 export default function QuoterPage() {
   const { user } = useAuth();
-  const { saveQuote } = useQuotes(user?.id, user?.role);
+  const { saveQuote } = useQuotes(user?.id, user?.role, user?.storeId);
+  const { settings, getRate, getExchangeRates: getExchangeRatesFromSettings } = useSettings();
   const pdfRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -48,34 +49,16 @@ export default function QuoterPage() {
   const [planKey, setPlanKey] = useState(plans[rawPlanKey] ? rawPlanKey : 'credito_normal');
   const config = plans[planKey];
 
-  // Fixed rate from settings
-  // Fixed rate from settings (now editable by admin)
-  const [rate, setRate] = useState(settings.rates[planKey] ?? config?.defaultRate ?? 15.9);
+  // Rate from Firestore settings (with store override)
+  const [rate, setRate] = useState(config?.defaultRate ?? 15.9);
 
-  // Reset rate when plan changes
-  // Calculate initial rate with store overrides
+  // Update rate when plan changes or settings load
   useEffect(() => {
-    let newRate = settings.rates[planKey] ?? config?.defaultRate ?? 15.9;
-
-    // Check for store specific overrides in localStorage
-    if (user?.storeId) {
-      try {
-        const savedStoreRates = localStorage.getItem('storeRates');
-        if (savedStoreRates) {
-          const storeRates = JSON.parse(savedStoreRates);
-          const specific = storeRates[user.storeId]?.[planKey];
-          // Check if specific rate exists and is not empty string/null
-          if (specific !== undefined && specific !== '' && !isNaN(parseFloat(specific))) {
-            newRate = parseFloat(specific);
-          }
-        }
-      } catch (e) {
-        console.error('Error loading store rates', e);
-      }
+    if (settings) {
+      const newRate = getRate(planKey, user?.storeId);
+      setRate(newRate || config?.defaultRate || 15.9);
     }
-
-    setRate(newRate);
-  }, [planKey, user]);
+  }, [planKey, settings, user, getRate, config]);
 
   // Financing state
   const [term, setTerm] = useState(editQuote?.plan?.term || 48);
@@ -93,20 +76,8 @@ export default function QuoterPage() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Exchange rates from settings + localStorage overrides
-  const getExchangeRates = () => {
-    const base = { ...settings.exchangeRates, MXN: 1 };
-    try {
-      const saved = localStorage.getItem('exchangeRates');
-      if (saved) {
-        const overrides = JSON.parse(saved);
-        Object.keys(overrides).forEach((k) => {
-          if (overrides[k]) base[k] = parseFloat(overrides[k]);
-        });
-      }
-    } catch { /* ignore */ }
-    return base;
-  };
+  // Exchange rates from Firestore settings
+  const exchangeRates = getExchangeRatesFromSettings();
 
   // Total vehicle price
   const totalPrice = parsePrice(vehicleData.price) + parsePrice(vehicleData.accessories);
@@ -117,8 +88,6 @@ export default function QuoterPage() {
     : downPercent;
 
   // Calculated data
-
-
   const { calculatedData, amortizationTable } = useCalculations({
     planKey,
     vehiclePrice: parsePrice(vehicleData.price),
@@ -129,7 +98,7 @@ export default function QuoterPage() {
     method: config.isLeasing ? 'leasing' : method,
     currency,
     scheduledPayments,
-    exchangeRates: getExchangeRates(),
+    exchangeRates,
   });
 
   // Plan change handler
@@ -159,9 +128,8 @@ export default function QuoterPage() {
   };
 
   // Save handler
-  const handleSave = () => {
+  const handleSave = async () => {
     const quoteData = {
-      id: editId || `CM-${Date.now()}`,
       date: editId ? (editQuote?.date || new Date().toISOString()) : new Date().toISOString(),
       client: clientData,
       vehicle: vehicleData,
@@ -169,12 +137,21 @@ export default function QuoterPage() {
       financials: calculatedData,
       config: { downPercent: effectiveDownPercent, gender, scheduledPayments },
       amortizationTable,
-      user: user?.id,
+      userId: user?.id,
+      vendorName: user?.name || '',
+      storeId: user?.storeId || null,
       status: editId ? (editQuote?.status || 'draft') : 'draft',
     };
-    saveQuote(quoteData, editId);
-    setEditId(quoteData.id);
-    alert(editId ? '¡Cotización actualizada!' : '¡Cotización guardada exitosamente!');
+
+    try {
+      await saveQuote(quoteData, editId);
+      if (!editId && quoteData.id) {
+        setEditId(quoteData.id);
+      }
+      alert(editId ? '¡Cotización actualizada!' : '¡Cotización guardada exitosamente!');
+    } catch (err) {
+      alert('Error al guardar la cotización: ' + err.message);
+    }
   };
 
   return (

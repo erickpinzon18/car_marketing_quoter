@@ -2,7 +2,6 @@ import SliderInput from '../ui/SliderInput';
 import ToggleGroup from '../ui/ToggleGroup';
 import { useAuth } from '../../context/AuthContext';
 import { plans } from '../../data/plans';
-import settings from '../../data/settings.json';
 import { formatMoney } from '../../utils/formatters';
 
 export default function FinancingControls({

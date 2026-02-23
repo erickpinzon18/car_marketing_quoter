@@ -2,6 +2,21 @@ import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+// Map Firebase Auth error codes to user-friendly Spanish messages
+const getErrorMessage = (error) => {
+  const code = error?.code || '';
+  const messages = {
+    'auth/invalid-credential': 'Correo o contraseña incorrectos',
+    'auth/user-not-found': 'No se encontró una cuenta con este correo',
+    'auth/wrong-password': 'Contraseña incorrecta',
+    'auth/too-many-requests': 'Demasiados intentos. Intenta de nuevo más tarde',
+    'auth/user-disabled': 'Esta cuenta ha sido deshabilitada',
+    'auth/invalid-email': 'El formato del correo no es válido',
+    'auth/network-request-failed': 'Error de conexión. Verifica tu internet',
+  };
+  return messages[code] || error?.message || 'Error al iniciar sesión';
+};
+
 export default function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
@@ -21,7 +36,7 @@ export default function LoginPage() {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -116,28 +131,6 @@ export default function LoginPage() {
             )}
           </button>
         </form>
-
-        {/* Demo Credentials */}
-        <div className="mt-8 pt-6 border-t border-slate-100">
-          <p className="text-xs font-bold text-slate-400 uppercase text-center mb-3">
-            Credenciales Demo
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { role: 'Admin', email: 'admin@carmarketing.mx', pass: 'admin123', color: 'bg-red-50 text-red-500 border-red-100' },
-              { role: 'Gerente', email: 'gerente@carmarketing.mx', pass: 'gerente123', color: 'bg-amber-50 text-amber-500 border-amber-100' },
-              { role: 'Vendedor', email: 'vendedor@carmarketing.mx', pass: 'vendedor123', color: 'bg-green-50 text-green-500 border-green-100' },
-            ].map((demo) => (
-              <button
-                key={demo.role}
-                onClick={() => { setEmail(demo.email); setPassword(demo.pass); }}
-                className={`text-[10px] font-bold py-2 px-2 rounded-xl border hover:scale-105 transition-all ${demo.color}`}
-              >
-                {demo.role}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

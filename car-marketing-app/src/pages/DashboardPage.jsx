@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useQuotes } from '../hooks/useQuotes';
-import { USERS } from '../data/users'; // Import USERS for store lookup
-import { formatMoney } from '../utils/formatters'; // Import formatMoney
+import { useUsers } from '../hooks/useUsers';
+import { formatMoney } from '../utils/formatters';
 import Header from '../components/layout/Header';
 import GlassPanel from '../components/ui/GlassPanel';
 import StatsGrid from '../components/dashboard/StatsGrid';
@@ -13,34 +13,11 @@ import ClientDetailModal from '../components/dashboard/ClientDetailModal';
 
 export default function DashboardPage() {
   const { user, getRoleName } = useAuth();
-  const { quotes, loading } = useQuotes(user?.id, user?.role);
+  const { quotes, loading } = useQuotes(user?.id, user?.role, user?.storeId);
   const [selectedClient, setSelectedClient] = useState(null);
 
-  // Filter quotes by Store if Manager (useQuotes handles Vendor filtering)
-  const dashboardQuotes = useMemo(() => {
-    if (!user || !quotes.length) return [];
-    
-    // Admin sees all
-    if (user.role === 'admin') return quotes;
-
-    // Vendors already filtered by hook, but ensure safety
-    if (user.role === 'vendor') return quotes;
-
-    // Managers: Filter by store using USERS lookup
-    if (user.role === 'manager') {
-      return quotes.filter(q => {
-        // Find the user who created the quote
-        // Note: clients.json uses 'user' field as ID string
-        const quoteUser = USERS.find(u => u.id === q.user);
-        // Display if in same store
-        return quoteUser && quoteUser.storeId === user.storeId;
-      });
-    }
-
-    return quotes;
-  }, [quotes, user]);
-
-
+  // Quotes are already filtered by role in useQuotes hook
+  const dashboardQuotes = quotes;
 
   // Get all quotes for the selected client (match by name + email)
   const clientQuotes = useMemo(() => {
@@ -93,10 +70,6 @@ export default function DashboardPage() {
         ) : (
           <StatsGrid quotes={dashboardQuotes} />
         )}
-
-
-
-
 
         {/* CRM Table */}
         <GlassPanel>

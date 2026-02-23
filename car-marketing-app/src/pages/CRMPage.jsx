@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useQuotes } from '../hooks/useQuotes';
-import { USERS } from '../data/users';
 import Header from '../components/layout/Header';
 import GlassPanel from '../components/ui/GlassPanel';
 import CRMTable from '../components/dashboard/CRMTable';
@@ -9,39 +8,22 @@ import ClientDetailModal from '../components/dashboard/ClientDetailModal';
 
 export default function CRMPage() {
   const { user } = useAuth();
-  const { quotes, loading } = useQuotes(user?.id, user?.role);
+  const { quotes, loading } = useQuotes(user?.id, user?.role, user?.storeId);
   const [selectedClient, setSelectedClient] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filter quotes logic
-  const crmQuotes = useMemo(() => {
-    if (!user || !quotes.length) return [];
-    
-    // Admin sees all (hook returns all)
-    // Vendor sees own (hook already filters)
-
-    // Managers: Filter by store using USERS lookup
-    if (user.role === 'manager') {
-      return quotes.filter(q => {
-        const quoteUser = USERS.find(u => u.id === q.user);
-        return quoteUser && quoteUser.storeId === user.storeId;
-      });
-    }
-
-    return quotes;
-  }, [quotes, user]);
-
+  // Quotes are already role-filtered by useQuotes hook
   const filteredQuotes = useMemo(() => {
-    if (!searchTerm) return crmQuotes;
+    if (!searchTerm) return quotes;
     const lower = searchTerm.toLowerCase();
-    return crmQuotes.filter((q) => 
+    return quotes.filter((q) => 
       q.client?.name?.toLowerCase().includes(lower) ||
       q.client?.email?.toLowerCase().includes(lower) ||
       q.client?.phone?.includes(lower) ||
       q.vehicle?.model?.toLowerCase().includes(lower)
     );
 
-  }, [crmQuotes, searchTerm]);
+  }, [quotes, searchTerm]);
 
   const clientQuotes = useMemo(() => {
     if (!selectedClient) return [];

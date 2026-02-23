@@ -1,7 +1,7 @@
 import ToggleGroup from '../ui/ToggleGroup';
 import ScheduledPayments from './ScheduledPayments';
 import { plans } from '../../data/plans';
-import settings from '../../data/settings.json';
+import { useSettings } from '../../hooks/useSettings';
 
 export default function SettingsPanel({
   planKey,
@@ -11,6 +11,12 @@ export default function SettingsPanel({
 }) {
   const config = plans[planKey];
   const showScheduled = planKey === 'pagos_programados';
+  const { settings } = useSettings();
+
+  const currencies = settings?.currencies || [
+    { code: 'MXN', flag: '🇲🇽', name: 'Peso Mexicano' },
+  ];
+  const exchangeRates = settings?.exchangeRates || {};
 
   return (
     <div className="space-y-6">
@@ -51,7 +57,7 @@ export default function SettingsPanel({
             onChange={(e) => onCurrencyChange(e.target.value)}
             className="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none appearance-none cursor-pointer text-sm"
           >
-            {settings.currencies.map((c) => (
+            {currencies.map((c) => (
               <option key={c.code} value={c.code}>
                 {c.flag} {c.code} — {c.name}
               </option>
@@ -64,7 +70,7 @@ export default function SettingsPanel({
         {currency !== 'MXN' && (
           <p className="text-[10px] text-slate-400 mt-2 ml-1">
             <i className="fas fa-info-circle mr-1"></i>
-            Tipo de cambio: 1 {currency} = {settings.exchangeRates[currency] || '—'} MXN
+            Tipo de cambio: 1 {currency} = {exchangeRates[currency] || '—'} MXN
           </p>
         )}
       </div>

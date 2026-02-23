@@ -1,6 +1,5 @@
 import { formatMoney } from '../../utils/formatters';
 import PlanBadge from '../ui/PlanBadge';
-import { USERS } from '../../data/users';
 
 export default function CRMTable({ quotes, loading, onClientClick, showVendor = false }) {
   if (loading) {
@@ -43,7 +42,7 @@ export default function CRMTable({ quotes, loading, onClientClick, showVendor = 
               day: 'numeric', month: 'short', year: 'numeric',
             });
 
-            const vendorName = USERS.find(u => u.id === q.user)?.name || 'Desconocido';
+            const vendorName = q.vendorName || q.userId || 'Desconocido';
 
             const initials = q.client?.name
               ? q.client.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
