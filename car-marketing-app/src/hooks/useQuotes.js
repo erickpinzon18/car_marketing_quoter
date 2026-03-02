@@ -19,7 +19,9 @@ export function useQuotes(userId, userRole, storeId) {
   const [loading, setLoading] = useState(true);
 
   const fetchQuotes = useCallback(async () => {
-    if (!userId) {
+    // If we're not an admin and we have no userId, abort.
+    // (Admins might pass null userId just to get the global stats)
+    if (!userId && userRole !== 'admin') {
       setLoading(false);
       return;
     }
@@ -54,6 +56,17 @@ export function useQuotes(userId, userRole, storeId) {
     fetchQuotes();
   }, [fetchQuotes]);
 
+  const updateQuoteStatus = useCallback(async (quoteId, newStatus) => {
+    try {
+      await updateQuote(quoteId, { status: newStatus });
+      await fetchQuotes();
+      return true;
+    } catch (err) {
+      console.error('Error updating status:', err);
+      throw err;
+    }
+  }, [fetchQuotes]);
+
   const saveQuote = useCallback(async (quoteData, editId) => {
     try {
       if (editId) {
@@ -71,5 +84,5 @@ export function useQuotes(userId, userRole, storeId) {
     }
   }, [fetchQuotes]);
 
-  return { quotes, loading, saveQuote, refetch: fetchQuotes };
+  return { quotes, loading, saveQuote, updateQuoteStatus, refetch: fetchQuotes };
 }

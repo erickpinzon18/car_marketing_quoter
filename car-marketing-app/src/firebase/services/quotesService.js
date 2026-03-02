@@ -50,6 +50,19 @@ export async function getQuotesByStore(storeId) {
 }
 
 /**
+ * Get quotes by client ID (all quotes for a specific client)
+ */
+export async function getQuotesByClient(clientId) {
+  const q = query(
+    collection(db, COLLECTION),
+    where('clientId', '==', clientId),
+    orderBy('createdAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+/**
  * Create a new quote
  */
 export async function createQuote(data) {

@@ -812,14 +812,14 @@ export default function ConfigurationPage() {
                           {agenciesMap[u.agencyId]?.name || '—'}
                         </td>
                         <td className="py-3 px-4 text-right">
-                          <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex gap-1 justify-end transition-opacity">
                             <button
                               onClick={() => {
                                 setEditingUser(u);
                                 setUserForm({ name: u.name || '', role: u.role || 'vendor', storeId: u.storeId || '', agencyId: u.agencyId || '' });
                                 setUserModalOpen(true);
                               }}
-                              className="p-1.5 text-slate-400 hover:text-brand-blue rounded-lg hover:bg-blue-50"
+                              className="p-1.5 text-brand-blue rounded-lg bg-blue-50"
                             >
                               <i className="fas fa-edit text-sm"></i>
                             </button>
@@ -838,7 +838,7 @@ export default function ConfigurationPage() {
                                   },
                                 });
                               }}
-                              className="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50"
+                              className="p-1.5 text-red-500 rounded-lg bg-red-50"
                             >
                               <i className="fas fa-trash text-sm"></i>
                             </button>

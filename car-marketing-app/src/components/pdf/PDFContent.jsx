@@ -11,7 +11,7 @@ import electricoFooter from '../../assets/electrico-3.png'; // Green footer
 import llaveRosa from '../../assets/llave-rosa.png'; // Key icon
 
 const PDFContent = forwardRef(function PDFContent(
-  { planKey, clientData, vehicleData, calculatedData, amortizationTable, currency, method, scheduledPayments, user },
+  { planKey, clientData, vehicleData, calculatedData, amortizationTable, currency, method, scheduledPayments, user, appliedPromotion },
   ref
 ) {
   const config = plans[planKey];
@@ -81,6 +81,30 @@ const PDFContent = forwardRef(function PDFContent(
     </tr>
   );
 
+  const isFemale = clientData?.gender === 'female';
+  const greetingWord = isFemale ? 'Estimada' : 'Estimado';
+  const clientName = clientData?.name || 'Cliente';
+  const greeting = `${greetingWord} ${clientName}:`;
+
+  const IntroParagraph = () => (
+    <div style={{ marginBottom: '20px', fontSize: '12px', color: '#333', lineHeight: '1.5' }}>
+      <p style={{ fontWeight: 'bold', color: config.color, fontSize: '14px', marginBottom: '8px', textTransform: 'uppercase' }}>
+        {greeting}
+      </p>
+      <p>
+        Es un gusto saludarle. A continuación le presentamos esta propuesta elaborada especialmente para usted.
+        Detallamos a continuación los beneficios financieros de nuestro plan 
+        <span style={{ fontWeight: 'bold', color: config.color }}> {config.title} </span> 
+        para la adquisición de su <span style={{ fontWeight: 'bold' }}>{vehicleData?.brand} {vehicleData?.model}</span>.
+      </p>
+      {user?.name && (
+        <p style={{ marginTop: '8px' }}>
+          Su asesor <span style={{ fontWeight: 'bold', color: config.color }}>{user.name}</span> se encuentra a su entera disposición para resolver cualquier inquietud sobre esta cotización.
+        </p>
+      )}
+    </div>
+  );
+
   return (
     <div ref={ref} style={{ position: 'relative' }}>
       {/* Watermark */}
@@ -121,14 +145,7 @@ const PDFContent = forwardRef(function PDFContent(
         </div>
 
         {/* 3. Greeting & Intro */}
-        <div style={{ marginBottom: '20px', fontSize: '12px', color: '#333' }}>
-          <p style={{ fontWeight: 'bold', color: config.color, marginBottom: '8px' }}>Estimado(a) Cliente:</p>
-          <p style={{ lineHeight: '1.4' }}>
-            Para nosotros es grato que nos haya elegido para la compra/renta de su auto a través de nuestro plan de
-            <span style={{ fontWeight: 'bold', color: config.color }}> {config.title}</span>. 
-            "Una decisión acertada para adquirir su vehículo con las mejores condiciones."
-          </p>
-        </div>
+        <IntroParagraph />
 
         {/* 4. Benefits List with Icons */}
         <div style={{ marginBottom: '25px', paddingLeft: '10px' }}>
@@ -139,6 +156,40 @@ const PDFContent = forwardRef(function PDFContent(
             </div>
           ))}
         </div>
+
+        {/* 4b. Applied Promotion Banner */}
+        {appliedPromotion && (
+          <div style={{
+            marginBottom: '20px',
+            border: '1px solid #C7D7FF',
+            borderLeft: '4px solid #0052CC',
+            borderRadius: '6px',
+            backgroundColor: '#F0F4FF',
+            padding: '10px 14px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 'bold', textTransform: 'uppercase', color: '#0052CC', letterSpacing: '0.05em', backgroundColor: '#DBEAFE', padding: '1px 6px', borderRadius: '999px', marginRight: '8px' }}>
+                Promoción Aplicada
+              </span>
+              <span style={{ fontWeight: 'bold', fontSize: '11px', color: '#1E3A5F' }}>{appliedPromotion.name}</span>
+            </div>
+            {appliedPromotion.description && (
+              <p style={{ fontSize: '10px', color: '#4B6080', margin: '4px 0' }}>{appliedPromotion.description}</p>
+            )}
+            <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+              {appliedPromotion.tasa !== null && appliedPromotion.tasa !== '' && (
+                <span style={{ fontSize: '9px', fontWeight: 'bold', backgroundColor: '#D1FAE5', color: '#065F46', padding: '2px 8px', borderRadius: '4px', border: '1px solid #A7F3D0' }}>
+                  Tasa Especial: {appliedPromotion.tasa}%
+                </span>
+              )}
+              {appliedPromotion.comisionApertura !== null && appliedPromotion.comisionApertura !== '' && (
+                <span style={{ fontSize: '9px', fontWeight: 'bold', backgroundColor: '#EDE9FE', color: '#5B21B6', padding: '2px 8px', borderRadius: '4px', border: '1px solid #DDD6FE' }}>
+                  Comisión Apertura: {appliedPromotion.comisionApertura}%
+                </span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* 5. Vehicle Info Box (Green/Blue Header) */}
         <div style={{ marginBottom: '0', border: `1px solid ${config.color}`, borderBottom: 'none' }}>
@@ -281,12 +332,7 @@ const PDFContent = forwardRef(function PDFContent(
           </div>
         </div>
         
-        {/* User Info */}
-        {user?.name && (
-          <div style={{ fontSize: '10px', color: '#666', marginTop: '10px', fontStyle: 'italic', textAlign: 'right' }}>
-            Cotización realizada por: {user.name}
-          </div>
-        )}
+        {/* User Info Extracted */}
         
         {/* Footer Branding Page 1 */}
         <div style={{ marginTop: 'auto', borderTop: '2px solid ' + config.color, paddingTop: '10px', fontSize: '10px', color: config.color }}>

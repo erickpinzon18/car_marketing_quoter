@@ -8,6 +8,9 @@ export default function SettingsPanel({
   method, onMethodChange,
   currency, onCurrencyChange,
   scheduledPayments, onScheduledPaymentsChange,
+  availablePromotions = [],
+  activePromotionId = '',
+  onPromotionChange,
 }) {
   const config = plans[planKey];
   const showScheduled = planKey === 'pagos_programados';
@@ -17,6 +20,8 @@ export default function SettingsPanel({
     { code: 'MXN', flag: '🇲🇽', name: 'Peso Mexicano' },
   ];
   const exchangeRates = settings?.exchangeRates || {};
+
+  const selectedPromo = availablePromotions.find(p => p.id === activePromotionId);
 
   return (
     <div className="space-y-6">
@@ -74,6 +79,46 @@ export default function SettingsPanel({
           </p>
         )}
       </div>
+
+      {availablePromotions.length > 0 && (
+        <div className="pt-4 border-t border-slate-100">
+          <label className="text-xs font-bold text-brand-blue uppercase tracking-wider mb-3 block flex items-center gap-2">
+            <i className="fas fa-tag"></i> Promociones Aplicables
+          </label>
+          <div className="relative">
+            <select
+              value={activePromotionId}
+              onChange={(e) => onPromotionChange(e.target.value)}
+              className="input-clean w-full rounded-2xl py-3 px-4 font-semibold text-brand-dark focus:outline-none appearance-none cursor-pointer border border-blue-200 bg-blue-50/50 text-sm"
+            >
+              <option value="">Sin promoción aplicada</option>
+              {availablePromotions.map((p) => (
+                <option key={p.id} value={p.id}>
+                  ⭐ {p.name}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-brand-blue">
+              <i className="fas fa-chevron-down text-xs"></i>
+            </div>
+          </div>
+          {selectedPromo && (
+            <div className="mt-3 p-3 bg-blue-50/80 rounded-xl border border-blue-100">
+              <p className="text-xs text-brand-blue font-semibold mb-1">
+                La promoción aplica:
+              </p>
+              <ul className="text-[10px] text-slate-600 space-y-1">
+                {selectedPromo.tasa !== null && selectedPromo.tasa !== '' && (
+                  <li>• Tasa especial: <b>{selectedPromo.tasa}%</b></li>
+                )}
+                {selectedPromo.comisionApertura !== null && selectedPromo.comisionApertura !== '' && (
+                  <li>• Comisión apertura: <b>{selectedPromo.comisionApertura}%</b></li>
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       {showScheduled && (
         <ScheduledPayments

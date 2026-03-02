@@ -13,6 +13,7 @@ export function useCalculations({
   currency,
   scheduledPayments = [],
   exchangeRates = { USD: 19.5, MXN: 1 },
+  promotion = null,
 }) {
   return useMemo(() => {
     const config = plans[planKey];
@@ -25,7 +26,17 @@ export function useCalculations({
     let amountToFinance = totalPrice - downPaymentAmount - scheduledPaymentsTotal;
     if (amountToFinance < 0) amountToFinance = 0;
 
-    const comisionPct = config.isLeasing ? 3 : 1;
+    // Apply promotion overrides
+    let actualRate = rate;
+    if (promotion && promotion.tasa !== undefined && promotion.tasa !== null && promotion.tasa !== '') {
+      actualRate = parseFloat(promotion.tasa);
+    }
+
+    let comisionPct = config.isLeasing ? 3 : 1; // Default
+    if (promotion && promotion.comisionApertura !== undefined && promotion.comisionApertura !== null && promotion.comisionApertura !== '') {
+      comisionPct = parseFloat(promotion.comisionApertura);
+    }
+
     const comision = totalPrice * (comisionPct / 100);
     const seguro = totalPrice * 0.0234;
 
@@ -35,7 +46,7 @@ export function useCalculations({
 
     const amortizationTable = generateAmortizationTable(
       amountToFinance,
-      rate,
+      actualRate,
       term,
       method
     );
@@ -45,18 +56,7 @@ export function useCalculations({
       monthlyPayment = amortizationTable[0].payment;
     }
 
-    const cat = calculateCAT(rate, comisionPct, term);
-
-    let totalInitial = downPaymentAmount + comision + seguro + lojack;
-    if (config.isLeasing) {
-      totalInitial += monthlyPayment * 2;
-    }
-
     // Process scheduled payments for PDF (map to approx month)
-    // Assume start date is "now", so just map sequentially?
-    // User enters a Date. We need to map that Date to a Month Index (1..Term).
-    // If Date is not provided, we can't map.
-    // Logic: monthDiff(today, p.date).
     const today = new Date();
     const processedScheduledPayments = scheduledPayments.map(p => {
         if (!p.date) return { ...p, monthIndex: 0 };
@@ -65,6 +65,15 @@ export function useCalculations({
         const diff = (pDate.getFullYear() - today.getFullYear()) * 12 + (pDate.getMonth() - today.getMonth());
         return { ...p, monthIndex: diff <= 0 ? 1 : diff };
     });
+
+    let totalInitial = downPaymentAmount + comision + seguro + lojack;
+    if (config.isLeasing) {
+      totalInitial += monthlyPayment * 2;
+    }
+
+    // Banxico CAT: The upfront charges you pay to get the credit (not financed part)
+    const upfrontCharges = comision + seguro + lojack;
+    const cat = calculateCAT(amountToFinance, upfrontCharges, amortizationTable, processedScheduledPayments);
 
     const calculatedData = {
       monthlyPayment,
@@ -75,16 +84,18 @@ export function useCalculations({
       totalInitial,
       amountToFinance,
       cat,
-      rate,
+      rate: actualRate,
+      originalRate: rate,
       term,
       totalScheduled: scheduledPaymentsTotal,
       scheduledPaymentsList: processedScheduledPayments,
       method,
+      appliedPromotionId: promotion?.id || null,
     };
 
     return { calculatedData, amortizationTable };
   }, [
     planKey, vehiclePrice, accessoriesPrice, term, downPercent,
-    rate, method, currency, scheduledPayments, exchangeRates,
+    rate, method, currency, scheduledPayments, exchangeRates, promotion,
   ]);
 }

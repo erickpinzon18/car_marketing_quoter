@@ -11,6 +11,10 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend
 } from 'recharts';
 
 export default function AdminStats() {
@@ -22,9 +26,22 @@ export default function AdminStats() {
 
   // Calculate stats from real Firestore data
   const storeStats = useMemo(() => {
-    if (!stores.length) return [];
-    return stores.map((store) => {
-      const storeQuotes = quotes.filter((q) => q.storeId === store.id);
+    // 1. Build user -> store map to cover quotes lacking a storeId
+    const userStoreMap = {};
+    users.forEach(u => {
+      userStoreMap[u.id] = u.role === 'admin' ? 'admin-general' : u.storeId || 'admin-general';
+    });
+
+    // 2. Add a virtual store for Admin General
+    const allStores = [...stores, { id: 'admin-general', name: 'Admin General' }];
+
+    return allStores.map((store) => {
+      // Find quotes that explicitly belong to this store OR belong to a user from this store
+      const storeQuotes = quotes.filter((q) => {
+        const implicitStoreId = userStoreMap[q.userId] || 'admin-general';
+        return q.storeId === store.id || implicitStoreId === store.id;
+      });
+
       const totalAmount = storeQuotes.reduce((sum, q) => {
         const price = q.vehicle?.price
           ? (typeof q.vehicle.price === 'string'
@@ -43,8 +60,8 @@ export default function AdminStats() {
           ? Math.round((storeQuotes.filter((q) => q.status === 'closed').length / storeQuotes.length) * 100)
           : 0,
       };
-    });
-  }, [stores, quotes]);
+    }).filter(s => s.quotes > 0 || s.id !== 'admin-general'); // Hide admin general if 0 quotes
+  }, [stores, quotes, users]);
 
   // Vendor leaderboard from real data
   const vendorLeaderboard = useMemo(() => {
@@ -70,8 +87,60 @@ export default function AdminStats() {
     return leaderboard.sort((a, b) => b.amount - a.amount).slice(0, 5);
   }, [users, quotes]);
 
-  const totalSales = useMemo(() => storeStats.reduce((a, b) => a + b.sales, 0), [storeStats]);
-  const totalQuotes = useMemo(() => storeStats.reduce((a, b) => a + b.quotes, 0), [storeStats]);
+  const topModels = useMemo(() => {
+    if (!quotes.length) return [];
+    const modelsCount = {};
+    quotes.forEach((q) => {
+      const modelName = q.vehicle?.model;
+      if (!modelName) return;
+      
+      const price = q.vehicle?.price
+        ? (typeof q.vehicle.price === 'string'
+          ? parseFloat(q.vehicle.price.replace(/,/g, '')) || 0
+          : q.vehicle.price)
+        : 0;
+
+      if (!modelsCount[modelName]) {
+        modelsCount[modelName] = { name: modelName, count: 0, amount: 0, brand: q.vehicle.brand };
+      }
+      modelsCount[modelName].count += 1;
+      modelsCount[modelName].amount += price;
+    });
+
+    return Object.values(modelsCount)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+  }, [quotes]);
+
+  const totalSales = useMemo(() => {
+    return quotes.reduce((sum, q) => {
+      const price = q.vehicle?.price
+        ? (typeof q.vehicle.price === 'string'
+          ? parseFloat(q.vehicle.price.replace(/,/g, '')) || 0
+          : q.vehicle.price)
+        : 0;
+      return sum + price;
+    }, 0);
+  }, [quotes]);
+
+  const totalQuotes = quotes.length;
+
+  const statusDistribution = useMemo(() => {
+    const counts = {
+      approved: { name: 'Aprobadas', value: 0, fill: '#10B981' }, 
+      pending: { name: 'Pendientes', value: 0, fill: '#F59E0B' }, 
+      rejected: { name: 'Rechazadas', value: 0, fill: '#EF4444' }, 
+      draft: { name: 'Borrador', value: 0, fill: '#64748B' }, 
+    };
+    quotes.forEach(q => {
+      if (counts[q.status]) {
+        counts[q.status].value += 1;
+      } else {
+        counts.draft.value += 1;
+      }
+    });
+    return Object.values(counts).filter(s => s.value > 0);
+  }, [quotes]);
 
   // Stores map for vendor leaderboard display
   const storesMap = stores.reduce((acc, s) => { acc[s.id] = s; return acc; }, {});
@@ -112,9 +181,41 @@ export default function AdminStats() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Quote Status PieChart */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
+          <h3 className="text-lg font-bold text-brand-dark mb-4">Estado de Cotizaciones</h3>
+          {statusDistribution.length > 0 ? (
+            <div className="flex-1 w-full min-h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={statusDistribution}
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {statusDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                  />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-full flex items-center justify-center text-slate-400 text-sm">
+              Sin datos de estados
+            </div>
+          )}
+        </div>
+
         {/* Sales by Store Chart */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 lg:col-span-2">
           <h3 className="text-lg font-bold text-brand-dark mb-6">Desempeño por Sucursal</h3>
           {storeStats.length > 0 ? (
             <div className="h-64 w-full">
@@ -122,7 +223,16 @@ export default function AdminStats() {
                 <BarChart data={storeStats} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748B' }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748B' }} tickFormatter={(value) => `$${value/1000000}M`} />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748B' }} 
+                    tickFormatter={(value) => {
+                      if (value >= 1000000) return `$${(value/1000000).toFixed(1)}M`;
+                      if (value >= 1000) return `$${(value/1000).toFixed(0)}k`;
+                      return `$${value}`;
+                    }} 
+                  />
                   <Tooltip 
                     cursor={{ fill: '#F1F5F9' }}
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
@@ -138,7 +248,9 @@ export default function AdminStats() {
             </div>
           )}
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Vendors Table */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
           <h3 className="text-lg font-bold text-brand-dark mb-6">Top Vendedores</h3>
@@ -178,6 +290,45 @@ export default function AdminStats() {
             </div>
           )}
         </div>
+
+        {/* Top Models Table */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+          <h3 className="text-lg font-bold text-brand-dark mb-6">Modelos Más Cotizados</h3>
+          {topModels.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-100 text-slate-400">
+                    <th className="pb-3 text-left font-bold uppercase text-xs">Vehículo</th>
+                    <th className="pb-3 text-center font-bold uppercase text-xs">Cotizaciones</th>
+                    <th className="pb-3 text-right font-bold uppercase text-xs">Volumen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topModels.map((model, i) => (
+                    <tr key={i} className="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+                      <td className="py-3 font-bold text-slate-700 flex flex-col">
+                        <span>{model.name}</span>
+                        <span className="text-[10px] text-slate-400 font-normal uppercase">{model.brand}</span>
+                      </td>
+                      <td className="py-3 text-center font-bold text-slate-600">
+                        {model.count}
+                      </td>
+                      <td className="py-3 text-right font-bold text-brand-blue">
+                        {formatMoney(model.amount)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="py-12 text-center text-slate-400 text-sm">
+              No hay datos de vehículos aún
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );

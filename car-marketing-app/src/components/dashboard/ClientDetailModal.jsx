@@ -5,7 +5,7 @@ import PlanBadge from '../ui/PlanBadge';
 import PDFModal from '../pdf/PDFModal';
 import PDFContent from '../pdf/PDFContent';
 
-export default function ClientDetailModal({ client, quotes, isOpen, onClose }) {
+export default function ClientDetailModal({ client, quotes, isOpen, onClose, isAdmin, onUpdateQuoteStatus }) {
   const navigate = useNavigate();
   const pdfRef = useRef(null);
   const [pdfQuote, setPdfQuote] = useState(null);
@@ -26,9 +26,11 @@ export default function ClientDetailModal({ client, quotes, isOpen, onClose }) {
 
   const statusConfig = {
     draft: { label: 'Borrador', color: 'bg-slate-100 text-slate-500', icon: 'fa-file-alt' },
+    pending: { label: 'Pendiente', color: 'bg-yellow-50 text-yellow-600', icon: 'fa-clock' },
     negotiation: { label: 'Negociación', color: 'bg-amber-50 text-amber-600', icon: 'fa-handshake' },
     approved: { label: 'Aprobada', color: 'bg-green-50 text-green-600', icon: 'fa-check-circle' },
-    lost: { label: 'Perdida', color: 'bg-red-50 text-red-500', icon: 'fa-times-circle' },
+    rejected: { label: 'Rechazada', color: 'bg-red-50 text-red-600', icon: 'fa-times-circle' },
+    lost: { label: 'Perdida', color: 'bg-rose-50 text-rose-500', icon: 'fa-ban' },
   };
 
   const handleEdit = (quote) => {
@@ -249,16 +251,40 @@ export default function ClientDetailModal({ client, quotes, isOpen, onClose }) {
                         </div>
                       </div>
 
-                      {/* Rate & ID */}
-                      <div className="flex items-center justify-between mt-2 px-1">
-                        <span className="text-[10px] text-slate-400">
-                          Tasa: <span className="font-bold">{q.plan?.rate}%</span> • {q.plan?.currency}
-                        </span>
-                        <span className="text-[10px] text-slate-300 font-mono">{q.id}</span>
+                      {/* Rate, ID & Vendor */}
+                      <div className="flex flex-col gap-1 mt-2 px-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] text-slate-400">
+                            Tasa: <span className="font-bold">{q.plan?.rate}%</span> • {q.plan?.currency}
+                          </span>
+                          <span className="text-[10px] text-slate-300 font-mono">{q.id}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            <i className="fas fa-user-edit mr-1"></i>
+                            Cotizó: <span className="text-brand-dark font-bold">{q.vendorName || 'Asesor'}</span>
+                          </span>
+                        </div>
                       </div>
 
                       {/* Action Buttons */}
                       <div className="flex gap-2 mt-3 pt-3 border-t border-slate-50">
+                        {isAdmin && q.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => onUpdateQuoteStatus?.(q.id, 'approved')}
+                              className="flex-1 py-2 rounded-xl bg-green-50 text-green-600 font-bold text-xs hover:bg-green-500 hover:text-white transition-all flex items-center justify-center gap-1.5"
+                            >
+                              <i className="fas fa-check"></i> Aprobar
+                            </button>
+                            <button
+                              onClick={() => onUpdateQuoteStatus?.(q.id, 'rejected')}
+                              className="flex-1 py-2 rounded-xl bg-red-50 text-red-600 font-bold text-xs hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-1.5"
+                            >
+                              <i className="fas fa-times"></i> Rechazar
+                            </button>
+                          </>
+                        )}
                         <button
                           onClick={() => setPdfQuote(q)}
                           className="flex-1 py-2 rounded-xl bg-brand-blue text-white font-bold text-xs hover:bg-blue-600 transition-all flex items-center justify-center gap-1.5"
@@ -298,6 +324,7 @@ export default function ClientDetailModal({ client, quotes, isOpen, onClose }) {
             currency={pdfQuote.plan?.currency || 'MXN'}
             method={pdfQuote.plan?.method || 'french'}
             scheduledPayments={pdfQuote.config?.scheduledPayments || []}
+            user={{ name: pdfQuote.vendorName || 'Asesor' }}
           />
         </PDFModal>
       )}

@@ -13,6 +13,7 @@ export default function FinancingControls({
   totalPrice,
   rate, onRateChange,
   gender, onGenderChange,
+  appliedPromotion = null,
 }) {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
@@ -173,7 +174,30 @@ export default function FinancingControls({
           </div>
         )}
 
-        
+        {/* Promotion Applied Indicator */}
+        {appliedPromotion && (
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-indigo-50/80 to-blue-50/80 border border-indigo-100">
+            <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 mt-0.5">
+              <i className="fas fa-tag text-white text-[9px]"></i>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-indigo-700">★ Promo aplicada: {appliedPromotion.name}</p>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {appliedPromotion.tasa !== null && appliedPromotion.tasa !== '' && (
+                  <span className="text-[9px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded font-bold">
+                    Tasa {appliedPromotion.tasa}%
+                  </span>
+                )}
+                {appliedPromotion.comisionApertura !== null && appliedPromotion.comisionApertura !== '' && (
+                  <span className="text-[9px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded font-bold">
+                    Comisión {appliedPromotion.comisionApertura}%
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </>
   );

@@ -3,6 +3,7 @@ import {
   getAllClients,
   searchClients as searchClientsService,
   createClient as createClientService,
+  updateClient as updateClientService,
 } from '../firebase/services/clientsService';
 
 /**
@@ -51,5 +52,15 @@ export function useClients() {
     }
   }, []);
 
-  return { clients, loading, searchClients, addClient, refetch: loadClients };
+  const updateClient = useCallback(async (id, data) => {
+    try {
+      await updateClientService(id, data);
+      setClients(prev => prev.map(c => c.id === id ? { ...c, ...data } : c));
+    } catch (err) {
+      console.error('Error updating client:', err);
+      throw err;
+    }
+  }, []);
+
+  return { clients, loading, searchClients, addClient, updateClient, refetch: loadClients };
 }
